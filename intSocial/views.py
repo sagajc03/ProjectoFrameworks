@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,redirect
 from django.http import HttpResponse
 from .models import Usuario, Post
-from .forms import CrearNuevoUsuario, CreateNewPost
+from .forms import CreateNewPost, CrearNuevoUsuario
 
 
 # Create your views here.
@@ -20,7 +20,7 @@ def usuario(request):
     })
     
 
-def crear_usuario(request):
+def signup(request):
     if request.method == 'GET':
         return render(request, 'crear_usuario.html', {
             'form': CrearNuevoUsuario
@@ -36,15 +36,11 @@ def crear_usuario(request):
             'form': CrearNuevoUsuario
         })
         
-    return HttpResponse("<h1>index</h1>")
 
 
 def login(request):
     return HttpResponse("<h1>login</h1>")
 
-
-def signup(request):
-    return HttpResponse("<h1>Sign up</h1>")
 
 
 def timeline(request):
