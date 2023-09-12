@@ -35,6 +35,19 @@ body{
     padding: 10PX;
     margin-bottom: 2PX;
     color: black;
+    
+}
+
+.card a {
+    text-decoration: none;
+}
+
+.card h2,
+.card h3,
+.card p,
+.card h6 {
+    text-decoration: none;
+    color: black;
 }
 
 .input {

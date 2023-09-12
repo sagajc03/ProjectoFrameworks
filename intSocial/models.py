@@ -24,10 +24,7 @@ class Level(models.Model):
     """
     Nivel de privaciodad
     """
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
+    name = models.CharField(max_length=50)  #1 publico, 2 privado, 3 grupo
 
 
 class Profile(models.Model):
@@ -85,7 +82,7 @@ class Post(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
     creado_en = models.DateTimeField(auto_now_add=True)
-    receptor_type = models.IntegerField()
+    receptor_type = models.IntegerField() 
     post_type = models.IntegerField(default=1)
 
     def __str__(self):
