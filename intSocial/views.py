@@ -1,20 +1,46 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,redirect
 from django.http import HttpResponse
-from .forms import CreateNewPost
-from .models import Post
+from .models import Usuario, Post
+from .forms import CreateNewPost, CrearNuevoUsuario
 
 
 # Create your views here.
+
 def index(request):
-    return HttpResponse("<h1>index</h1>")
+    title= 'Soy el inicio awebito'
+    return render(request, "index.html",{
+        'title': title
+    })
+
+
+def usuario(request):
+    usuarios = Usuario.objects.all()
+    return render(request, "usuario.html",{
+        'usuarios': usuarios
+    })
+    
+
+def signup(request):
+    if request.method == 'GET':
+        return render(request, 'crear_usuario.html', {
+            'form': CrearNuevoUsuario
+        })
+    else:
+        Usuario.objects.create(
+            nombre=request.POST['nombre'],
+            apellidos=request.POST['apellidos'],
+            username=request.POST['username'],
+            email=request.POST['email'],
+            contasenia=request.POST['contasenia'])
+        return render(request, 'crear_usuario.html',{
+            'form': CrearNuevoUsuario
+        })
+        
 
 
 def login(request):
     return HttpResponse("<h1>login</h1>")
 
-
-def signup(request):
-    return HttpResponse("<h1>Sign up</h1>")
 
 
 def timeline(request):

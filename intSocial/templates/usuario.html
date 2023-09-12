@@ -1,0 +1,16 @@
+{%extends 'layouts/base.html'%}
+
+{%block content%}
+<h1>Usuario</h1>
+{% for usuario in usuarios %}
+
+<dir>
+    <h1>{{usuario.nombre}}</h1>
+    <p>{{usuario.apellidos}}</p>
+    <p>{{usuario.username}}</p>
+    <p>{{usuario.email}}</p>
+    <p>{{usuario.contasenia}}</p>
+</dir>
+
+{%endfor%}
+{%endblock%}
