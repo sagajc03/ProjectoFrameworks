@@ -4,6 +4,18 @@
 
 {% block content %}
 
+<h1>Timeline</h1>
 
+{% for post in posts %}
+<article class="card">
+    <a href="" >
+        <h2 class="carda">{{post.titulo}}</h2>
+        <h3 class="carda">{{post.autor.username}}</h3>
+        <p class="carda">{{post.contenido}}</p>
+        <h6 class="carda">{{post.creado_en}}</h6>
+    </a>
+</article>
+
+{% endfor %}
 
 {% endblock %}
