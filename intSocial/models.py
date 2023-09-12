@@ -16,7 +16,7 @@ class Usuario(models.Model):
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
-    def __Str__(self):
+    def __str__(self):
         return self.username
 
 
@@ -24,7 +24,7 @@ class Level(models.Model):
     """
     Nivel de privaciodad
     """
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)  #1 publico, 2 privado, 3 grupo
 
 
 class Profile(models.Model):
@@ -42,6 +42,9 @@ class Profile(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.usuario.username + ' ' + self.titulo
+
 
 class Portafolio(models.Model):
     """
@@ -52,6 +55,9 @@ class Portafolio(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
     creado_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.usuario.username + ' ' + self.titulo
 
 
 class Imagen(models.Model):
@@ -66,6 +72,9 @@ class Imagen(models.Model):
     portafolio = models.ForeignKey(Portafolio, on_delete=models.SET_NULL, null=True, blank=True)
     creado_en = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.usuario.username + ' ' + self.titulo
+
 
 class Post(models.Model):
     titulo = models.CharField(max_length=50)
@@ -73,8 +82,11 @@ class Post(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
     creado_en = models.DateTimeField(auto_now_add=True)
-    receptor_type = models.IntegerField()
+    receptor_type = models.IntegerField() 
     post_type = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.autor.username + ' ' + self.titulo
 
 
 class PostImagen(models.Model):
@@ -92,6 +104,9 @@ class Likes(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     creado_en = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.usuario.username + ' ' + self.creado_en
+
 
 class Comentario(models.Model):
     """
@@ -102,6 +117,9 @@ class Comentario(models.Model):
     contenido = models.TextField()
     respuesta_a = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='respuestas')
     creado_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username + ' ' + self.ref + self.creado_en
 
 
 class Notificaciones(models.Model):
@@ -120,3 +138,6 @@ class Grupos(models.Model):
     user = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.IntegerField()  # 1 open, 2 closed
     creado_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.titulo

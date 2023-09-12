@@ -1,0 +1,17 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} New post {% endblock %}
+
+{% block content %}
+
+<h1>Crear un post nuevo</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{form}}
+    <button>
+        Publicar
+    </button>
+</form>
+
+{% endblock %}
