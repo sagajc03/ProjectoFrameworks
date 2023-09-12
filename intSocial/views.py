@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from .forms import CreateNewPost
+from .models import Post
 
 
 # Create your views here.
@@ -16,7 +18,10 @@ def signup(request):
 
 
 def timeline(request):
-    return render(request, 'timeline.html')
+    posts = Post.objects.all()
+    return render(request, 'timeline.html', {
+        'posts':posts
+    })
 
 
 def post(request, id_post):
@@ -24,7 +29,13 @@ def post(request, id_post):
 
 
 def new_post(request):
-    return HttpResponse("<h1>New post</h1>")
+    if request.method == 'GET':
+        return render(request, 'new_post.html', {
+            'form': CreateNewPost()
+        })
+    else:
+        Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'], autor_id = 1, level_id = 1, receptor_type = 1)
+        return redirect('timeline')
 
 
 def profile(request, id_profile):
