@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect,redirect
+from django.shortcuts import render, redirect,redirect, get_object_or_404
+from django.core.paginator import Paginator
 from django.http import HttpResponse
-from .models import Usuario, Post
-from .forms import CreateNewPost, CrearNuevoUsuario
+from .models import Usuario, Post, Comentario
+from .forms import CreateNewPost, CrearNuevoUsuario, CreateNewComment
 
 
 # Create your views here.
@@ -44,14 +45,33 @@ def login(request):
 
 
 def timeline(request):
-    posts = Post.objects.all()
+    all_posts = Post.objects.all().order_by('-creado_en')
+    paginator = Paginator(all_posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, 'timeline.html', {
-        'posts':posts
+        'page_obj':page_obj
     })
 
 
 def post(request, id_post):
-    return HttpResponse("<h1>post %i</h1>" % id_post)
+    if request.method == 'GET':
+        post = get_object_or_404(Post, id=id_post)
+        comentarios = Comentario.objects.filter(ref_id=id_post)
+        return render(request, 'detalles_post.html', {
+            'post':post,
+            'comentarios':comentarios,
+            'form':CreateNewComment
+        })
+    else:
+        post = get_object_or_404(Post, id=id_post)
+        Comentario.objects.create(ref=post, user_id = 1, contenido = request.POST['contenido'])
+        comentarios = Comentario.objects.filter(ref_id=id_post).order_by('-creado_en')
+        return render(request, 'detalles_post.html', {
+            'post':post,
+            'comentarios':comentarios,
+            'form':CreateNewComment
+        })
 
 
 def new_post(request):

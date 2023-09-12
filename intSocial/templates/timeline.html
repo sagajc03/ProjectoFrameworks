@@ -6,16 +6,32 @@
 
 <h1>Timeline</h1>
 
-{% for post in posts %}
+{% for post in page_obj %}
 <article class="card">
-    <a href="" >
-        <h2 class="carda">{{post.titulo}}</h2>
-        <h3 class="carda">{{post.autor.username}}</h3>
-        <p class="carda">{{post.contenido}}</p>
-        <h6 class="carda">{{post.creado_en}}</h6>
+    <a href="{% url 'post_details' post.id %}" >
+        <h2>{{post.titulo}}</h2>
+        <h3>{{post.autor.username}}</h3>
+        <p>{{post.contenido}}</p>
+        <h6>{{post.creado_en}}</h6>
     </a>
 </article>
 
 {% endfor %}
-
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+        
+        <span class="current-page">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 {% endblock %}

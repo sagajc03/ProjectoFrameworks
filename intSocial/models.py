@@ -119,8 +119,7 @@ class Comentario(models.Model):
     creado_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username + ' ' + self.ref + self.creado_en
-
+        return self.user.username + ' a ' + self.ref.autor.username
 
 class Notificaciones(models.Model):
     not_type = models.IntegerField()  # 1 likes, 2 comentarios
