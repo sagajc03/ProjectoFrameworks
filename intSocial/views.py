@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect,redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.http import HttpResponse, HttpResponseRedirect
 from .models import Usuario, Post
 from .forms import CreateNewPost, CrearNuevoUsuario
-
 
 # Create your views here.
 
@@ -26,21 +26,47 @@ def signup(request):
             'form': CrearNuevoUsuario
         })
     else:
-        Usuario.objects.create(
+        Usuario.objects.create_user(
             nombre=request.POST['nombre'],
             apellidos=request.POST['apellidos'],
             username=request.POST['username'],
             email=request.POST['email'],
             contasenia=request.POST['contasenia'])
-        return render(request, 'crear_usuario.html',{
-            'form': CrearNuevoUsuario
-        })
-        
+        return redirect('/')
+    
 
 
 def login(request):
-    return HttpResponse("<h1>login</h1>")
+    if request.method == "GET":
+        if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:
+            context = {
+                'username':request.COOKIES['username'],
+                'login_status':request.COOKIES.get('logged_in'),
+            }
+            return render(request, 'profile.html', context)
+        else:
+            return render(request, 'login.html')
 
+    if request.method == "POST":
+        username=request.POST.get('email')
+        context = {
+                'username':username,
+                'login_status':'TRUE',
+            }
+        response = render(request, 'profile.html', context)
+
+        # setting cookies
+        response.set_cookie('username', username)
+        response.set_cookie('logged_in', True)
+        return response
+
+def logout(request):
+    response = HttpResponseRedirect(reverse('login'))
+
+    response.delete_cookie('username')
+    response.delete_cookie('logged_in')
+
+    return response
 
 
 def timeline(request):
@@ -64,5 +90,12 @@ def new_post(request):
         return redirect('timeline')
 
 
-def profile(request, id_profile):
-    return HttpResponse("<h1>Perfil %i</h1>" %id_profile)
+def profile(request):
+    if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:
+            context = {
+                'username':request.COOKIES['username'],
+                'login_status':request.COOKIES.get('logged_in'),
+            }
+            return render(request, 'profile.html', context)
+    else:
+        return render(request, 'profile.html')
