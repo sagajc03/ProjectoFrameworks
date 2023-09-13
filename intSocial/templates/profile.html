@@ -1,0 +1,13 @@
+{%extends 'layouts/base.html'%} 
+{%block content%}
+<title>django cookie demo - logged in</title>
+    {% if username %}
+    <h4>You are logged in as {{username}}</h4>
+    <h4>Login Status: {{login_status}}</h4>
+    <a href="{% url 'logout' %}">logout</a>
+    {% else %}
+    <h4>You are not logged in</h4>
+    <a href="{% url 'login' %}">login</a>
+    {% endif %}
+    <a href="{% url 'index' %}">Home</a>
+{%endblock%}
