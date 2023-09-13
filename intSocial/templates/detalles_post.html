@@ -1,0 +1,34 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} {{post.titulo}} {% endblock %}
+
+{% block content %}
+
+<h1> {{post.titulo}} </h1>
+
+<article class="card">
+        <h2>{{post.titulo}}</h2>
+        <h3>{{post.autor.username}}</h3>
+        <p>{{post.contenido}}</p>
+        <h6>{{post.creado_en}}</h6>
+
+    {% for comentario in comentarios %}
+    <article class="comentario">
+            <h2>{{comentario.titulo}}</h2>
+            <h4>respuesta a {{comentario.ref.autor}}</h4>
+            <h3>{{comentario.user.username}}</h3>
+            <p>{{comentario.contenido}}</p>
+            <h6>{{comentario.creado_en}}</h6>
+    </article>
+
+    {% endfor %}
+</article>
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button>
+        Publicar
+    </button>
+</form>
+
+{% endblock %}

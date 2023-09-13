@@ -31,7 +31,7 @@ body{
 }
 
 .card {
-    background-color: whitesmoke;
+    background-color: #F0EFFF;
     padding: 10PX;
     margin-bottom: 2PX;
     color: black;
@@ -55,4 +55,10 @@ body{
     padding: 10px;
     text-align: center;
     display: block;
+}
+.comentario{
+    background-color: #FFF1E5;
+    padding: 10PX;
+    margin-bottom: 2PX;
+    color: black;
 }

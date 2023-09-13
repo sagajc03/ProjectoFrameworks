@@ -14,3 +14,9 @@ class CreateNewPost(forms.Form):
     contenido = forms.CharField(label="Detalles", widget=forms.TextInput(attrs={
         'class': 'input'
     }))
+
+
+class CreateNewComment(forms.Form):
+    contenido = forms.CharField(label="Escribe tu comentario", widget=forms.TextInput(attrs={
+        'class': 'input'
+    }))
