@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Usuario, Post, Comentario
@@ -27,7 +28,7 @@ def signup(request):
             'form': CrearNuevoUsuario
         })
     else:
-        Usuario.objects.create_user(
+        Usuario.objects.create(
             nombre=request.POST['nombre'],
             apellidos=request.POST['apellidos'],
             username=request.POST['username'],
@@ -50,16 +51,26 @@ def login(request):
 
     if request.method == "POST":
         username=request.POST.get('email')
-        context = {
-                'username':username,
-                'login_status':'TRUE',
-            }
-        response = render(request, 'profile.html', context)
+        password = request.POST.get('password')
+        usuarioConectar = Usuario.objects.filter(email=username, contasenia=password)
+        if usuarioConectar.exists():
+            usuac =  usuarioConectar.first()
+            user_id = usuac.id
+            context = {
+                    'username':username,
+                    'login_status':'TRUE',
+                }
+            response = render(request, 'profile.html')
 
-        # setting cookies
-        response.set_cookie('username', username)
-        response.set_cookie('logged_in', True)
-        return response
+            # setting cookies
+            response.set_cookie('username', username)
+            response.set_cookie('logged_in', True)
+            response.set_cookie('user_id', user_id)
+            return response
+        else:
+            return render(request, 'login.html', {
+                'fallo':True
+            })
 
 def logout(request):
     response = HttpResponseRedirect(reverse('login'))
@@ -83,7 +94,7 @@ def timeline(request):
 def post(request, id_post):
     if request.method == 'GET':
         post = get_object_or_404(Post, id=id_post)
-        comentarios = Comentario.objects.filter(ref_id=id_post)
+        comentarios = Comentario.objects.filter(ref_id=id_post).order_by('creado_en')
         return render(request, 'detalles_post.html', {
             'post':post,
             'comentarios':comentarios,
@@ -91,7 +102,7 @@ def post(request, id_post):
         })
     else:
         post = get_object_or_404(Post, id=id_post)
-        Comentario.objects.create(ref=post, user_id = 1, contenido = request.POST['contenido'])
+        Comentario.objects.create(ref=post, user_id = request.COOKIES['user_id'], contenido = request.POST['contenido'])
         comentarios = Comentario.objects.filter(ref_id=id_post).order_by('-creado_en')
         return render(request, 'detalles_post.html', {
             'post':post,
@@ -106,7 +117,7 @@ def new_post(request):
             'form': CreateNewPost()
         })
     else:
-        Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'], autor_id = 1, level_id = 1, receptor_type = 1)
+        Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'], autor_id = request.COOKIES['user_id'], level_id = 1, receptor_type = 1)
         return redirect('timeline')
 
 

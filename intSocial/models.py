@@ -8,8 +8,8 @@ class Usuario(models.Model):
     """
     nombre = models.CharField(max_length=50)
     apellidos = models.CharField(max_length=50)
-    username = models.CharField(max_length=50)
-    email = models.CharField(max_length=255)
+    username = models.CharField(max_length=50, unique=True)
+    email = models.CharField(max_length=255, unique=True)
     contasenia = models.CharField(max_length=60)
     esta_Activo = models.BooleanField(default=True)
     es_Admin = models.BooleanField(default=False)
