@@ -4,7 +4,10 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Usuario, Post, Comentario
 from .forms import CreateNewPost, CrearNuevoUsuario, CreateNewComment
-
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout, authenticate
+from django.db import IntegrityError
 
 # Create your views here.
 
@@ -25,9 +28,25 @@ def usuario(request):
 def signup(request):
     if request.method == 'GET':
         return render(request, 'crear_usuario.html', {
-            'form': CrearNuevoUsuario
+            'form': UserCreationForm
         })
     else:
+        if request.POST['password1'] == request.POST['password2']:
+            try:
+                #register user
+                user = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
+                user.save()
+                login(request, user)
+                return redirect('/')
+            except IntegrityError:
+                return render(request, 'crear_usuario.html', {
+                    'form': UserCreationForm,
+                    'error':'Username already exist'
+                })
+        return render(request, 'crear_usuario.html', {
+                'form': UserCreationForm,
+                'error':'Password do not match'
+            })
         Usuario.objects.create(
             nombre=request.POST['nombre'],
             apellidos=request.POST['apellidos'],
@@ -37,51 +56,68 @@ def signup(request):
         return redirect('/')
 
 
-def login(request):
-    if request.method == "GET":
-        if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:
-            context = {
-                'username': request.COOKIES['username'],
-                'login_status': request.COOKIES.get('logged_in'),
-            }
-            return render(request, 'profile.html', context)
-        else:
+def signin(request):
+    # if request.method == "GET":
+    #     if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:
+    #         context = {
+    #             'username': request.COOKIES['username'],
+    #             'login_status': request.COOKIES.get('logged_in'),
+    #         }
+    #         return render(request, 'profile.html', context)
+    #     else:
+    #         return render(request, 'login.html', {
+    #             'fallo': False
+    #         })
+    if request.method == 'GET':
+        return render(request, 'login.html', {
+            'form': AuthenticationForm
+        })
+    else:
+        user = authenticate(request, 
+                     username=request.POST['username'],
+                     password= request.POST['password'])
+        if user is None:
             return render(request, 'login.html', {
-                'fallo': False
-            })
-
-    if request.method == "POST":
-        username = request.POST.get('email')
-        password = request.POST.get('password')
-        usuarioConectar = Usuario.objects.filter(email=username, contasenia=password)
-        if usuarioConectar.exists():
-            usuac = usuarioConectar.first()
-            user_id = usuac.id
-            context = {
-                'username': username,
-                'login_status': 'TRUE',
-            }
-            response = render(request, 'profile.html')
-
-            # setting cookies
-            response.set_cookie('username', username)
-            response.set_cookie('logged_in', True)
-            response.set_cookie('user_id', user_id)
-            return response
+                        'form': AuthenticationForm,
+                        'error':'Username or password is incorrect'
+                    })
         else:
-            return render(request, 'login.html', {
-                'fallo': True
-            })
+            login(request, user)
+            return redirect('timeline')
+    # if request.method == "POST":
+    #     username = request.POST.get('email')
+    #     password = request.POST.get('password')
+    #     usuarioConectar = Usuario.objects.filter(email=username, contasenia=password)
+    #     if usuarioConectar.exists():
+    #         usuac = usuarioConectar.first()
+    #         user_id = usuac.id
+    #         context = {
+    #             'username': username,
+    #             'login_status': 'TRUE',
+    #         }
+    #         response = render(request, 'profile.html')
+
+    #         # setting cookies
+    #         response.set_cookie('username', username)
+    #         response.set_cookie('logged_in', True)
+    #         response.set_cookie('user_id', user_id)
+    #         return response
+    #     else:
+    #         return render(request, 'login.html', {
+    #             'fallo': True
+    #         })
 
 
-def logout(request):
-    response = HttpResponseRedirect(reverse('login'))
+def signout(request):
+    logout(request)
+    return redirect('index')
+    # response = HttpResponseRedirect(reverse('login'))
 
-    response.delete_cookie('username')
-    response.delete_cookie('logged_in')
-    response.delete_cookie('user_id')
+    # response.delete_cookie('username')
+    # response.delete_cookie('logged_in')
+    # response.delete_cookie('user_id')
 
-    return response
+    # return response
 
 
 def timeline(request):
@@ -105,7 +141,7 @@ def post(request, id_post):
         })
     else:
         post = get_object_or_404(Post, id=id_post)
-        Comentario.objects.create(ref=post, user_id=request.COOKIES['user_id'], contenido=request.POST['contenido'])
+        Comentario.objects.create(ref=post, user=request.user, contenido=request.POST['contenido'])
         comentarios = Comentario.objects.filter(ref_id=id_post).order_by('-creado_en')
         return render(request, 'detalles_post.html', {
             'post': post,
@@ -121,7 +157,7 @@ def new_post(request):
         })
     else:
         Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
-                            autor_id=request.COOKIES['user_id'], level_id=1, receptor_type=1)
+                            autor=request.user, level_id=1, receptor_type=1)
         return redirect('timeline')
 
 

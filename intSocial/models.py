@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Usuario(models.Model):
@@ -39,7 +39,7 @@ class Profile(models.Model):
     bio = models.CharField(max_length=255)
     info_contacto = models.TextField()
     email_publico = models.CharField(max_length=255)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -52,7 +52,7 @@ class Portafolio(models.Model):
     """
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField()
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
     creado_en = models.DateTimeField(auto_now_add=True)
 
@@ -67,7 +67,7 @@ class Imagen(models.Model):
     src = models.CharField(max_length=255)
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField()
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
     portafolio = models.ForeignKey(Portafolio, on_delete=models.SET_NULL, null=True, blank=True)
     creado_en = models.DateTimeField(auto_now_add=True)
@@ -79,7 +79,7 @@ class Imagen(models.Model):
 class Post(models.Model):
     titulo = models.CharField(max_length=50)
     contenido = models.TextField()
-    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    autor = models.ForeignKey(User, on_delete=models.CASCADE)
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
     creado_en = models.DateTimeField(auto_now_add=True)
     receptor_type = models.IntegerField()
@@ -101,7 +101,7 @@ class Likes(models.Model):
     """
     valor = models.IntegerField()  # 1 like, 2 dislike
     ref = models.ForeignKey(Post, on_delete=models.CASCADE)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     creado_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -113,7 +113,7 @@ class Comentario(models.Model):
     Para hacer comentarios
     """
     ref = models.ForeignKey(Post, on_delete=models.CASCADE)  # post en el que se encuentra
-    user = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     contenido = models.TextField()
     respuesta_a = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='respuestas')
     creado_en = models.DateTimeField(auto_now_add=True)
@@ -125,8 +125,8 @@ class Comentario(models.Model):
 class Notificaciones(models.Model):
     not_type = models.IntegerField()  # 1 likes, 2 comentarios
     ref = models.ForeignKey(Post, on_delete=models.CASCADE)
-    receptor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='notificaciones_recibe')
-    sender = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='notificaciones_envia')
+    receptor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificaciones_recibe')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificaciones_envia')
     fue_leido = models.BooleanField(default=False)
     creado_en = models.DateTimeField(auto_now_add=True)
 
@@ -135,7 +135,7 @@ class Grupos(models.Model):
     imagen = models.CharField(max_length=255)
     titulo = models.CharField(max_length=100)
     descripcion = models.TextField()
-    user = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.IntegerField()  # 1 open, 2 closed
     creado_en = models.DateTimeField(auto_now_add=True)
 
