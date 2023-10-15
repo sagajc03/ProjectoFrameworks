@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -119,7 +120,7 @@ def signout(request):
 
     # return response
 
-
+@login_required
 def timeline(request):
     all_posts = Post.objects.all().order_by('-creado_en')
     paginator = Paginator(all_posts, 10)
@@ -129,7 +130,7 @@ def timeline(request):
         'page_obj': page_obj
     })
 
-
+@login_required
 def post(request, id_post):
     if request.method == 'GET':
         post = get_object_or_404(Post, id=id_post)
@@ -149,7 +150,7 @@ def post(request, id_post):
             'form': CreateNewComment
         })
 
-
+@login_required
 def new_post(request):
     if request.method == 'GET':
         return render(request, 'new_post.html', {
@@ -160,7 +161,7 @@ def new_post(request):
                             autor=request.user, level_id=1, receptor_type=1)
         return redirect('timeline')
 
-
+@login_required
 def profile(request):
     if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:
         context = {
