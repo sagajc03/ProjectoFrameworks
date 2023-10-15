@@ -10,6 +10,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 
+
 # Create your views here.
 
 def index(request):
@@ -34,7 +35,7 @@ def signup(request):
     else:
         if request.POST['password1'] == request.POST['password2']:
             try:
-                #register user
+                # register user
                 user = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
                 user.save()
                 login(request, user)
@@ -42,83 +43,36 @@ def signup(request):
             except IntegrityError:
                 return render(request, 'crear_usuario.html', {
                     'form': UserCreationForm,
-                    'error':'Username already exist'
+                    'error': 'Username already exist'
                 })
         return render(request, 'crear_usuario.html', {
-                'form': UserCreationForm,
-                'error':'Password do not match'
-            })
-        Usuario.objects.create(
-            nombre=request.POST['nombre'],
-            apellidos=request.POST['apellidos'],
-            username=request.POST['username'],
-            email=request.POST['email'],
-            contasenia=request.POST['contasenia'])
-        return redirect('/')
+            'form': UserCreationForm,
+            'error': 'Password do not match'
+        })
 
 
 def signin(request):
-    # if request.method == "GET":
-    #     if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:
-    #         context = {
-    #             'username': request.COOKIES['username'],
-    #             'login_status': request.COOKIES.get('logged_in'),
-    #         }
-    #         return render(request, 'profile.html', context)
-    #     else:
-    #         return render(request, 'login.html', {
-    #             'fallo': False
-    #         })
     if request.method == 'GET':
         return render(request, 'login.html', {
             'form': AuthenticationForm
         })
     else:
-        user = authenticate(request, 
-                     username=request.POST['username'],
-                     password= request.POST['password'])
+        user = authenticate(request,
+                            username=request.POST['username'],
+                            password=request.POST['password'])
         if user is None:
             return render(request, 'login.html', {
-                        'form': AuthenticationForm,
-                        'error':'Username or password is incorrect'
-                    })
+                'form': AuthenticationForm,
+                'error': 'Username or password is incorrect'
+            })
         else:
             login(request, user)
             return redirect('timeline')
-    # if request.method == "POST":
-    #     username = request.POST.get('email')
-    #     password = request.POST.get('password')
-    #     usuarioConectar = Usuario.objects.filter(email=username, contasenia=password)
-    #     if usuarioConectar.exists():
-    #         usuac = usuarioConectar.first()
-    #         user_id = usuac.id
-    #         context = {
-    #             'username': username,
-    #             'login_status': 'TRUE',
-    #         }
-    #         response = render(request, 'profile.html')
-
-    #         # setting cookies
-    #         response.set_cookie('username', username)
-    #         response.set_cookie('logged_in', True)
-    #         response.set_cookie('user_id', user_id)
-    #         return response
-    #     else:
-    #         return render(request, 'login.html', {
-    #             'fallo': True
-    #         })
-
 
 def signout(request):
     logout(request)
     return redirect('index')
-    # response = HttpResponseRedirect(reverse('login'))
 
-    # response.delete_cookie('username')
-    # response.delete_cookie('logged_in')
-    # response.delete_cookie('user_id')
-
-    # return response
 
 @login_required
 def timeline(request):
@@ -149,6 +103,7 @@ def timeline(request):
     }
     return render(request, 'timeline.html', context)
 
+
 @login_required
 def post(request, id_post):
     if request.method == 'GET':
@@ -173,6 +128,7 @@ def post(request, id_post):
             'imagenes_relacionadas': imagenes_relacionadas
         })
 
+
 @login_required
 def new_post(request):
     if request.method == 'GET':
@@ -184,14 +140,16 @@ def new_post(request):
             Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
                                 autor=request.user, level_id=1, receptor_type=1)
             return redirect('timeline')
-        else: 
+        else:
             post = Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
-                                autor=request.user, level_id=1, receptor_type=1)
+                                       autor=request.user, level_id=1, receptor_type=1)
             imagen = Imagen.objects.create(src=request.FILES['imagen'],
-                    titulo=request.POST['titulo'], descripcion=request.POST['contenido'],
-                    usuario=request.user,level_id=1)
+                                           titulo=request.POST['titulo'], descripcion=request.POST['contenido'],
+                                           usuario=request.user, level_id=1)
             postimg = PostImagen.objects.create(post=post, imagen=imagen)
             return redirect('timeline')
+
+
 @login_required
 def profile(request):
     if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:
