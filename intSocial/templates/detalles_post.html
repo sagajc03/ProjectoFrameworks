@@ -12,6 +12,15 @@
         <p>{{post.contenido}}</p>
         <h6>{{post.creado_en}}</h6>
 
+        <h2>Imágenes relacionadas</h2>
+        <ul>
+            {% for imagen_relacionada in imagenes_relacionadas %}
+                <li>
+                    <img src="{{ imagen_relacionada.imagen.src.url }}" alt="{{ imagen_relacionada.imagen.titulo }}">
+                </li>
+            {% endfor %}
+        </ul>
+
     {% for comentario in comentarios %}
     <article class="comentario">
             <h2>{{comentario.titulo}}</h2>

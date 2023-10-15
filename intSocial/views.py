@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Usuario, Post, Comentario
+from .models import Usuario, Post, Comentario, Imagen, PostImagen
 from .forms import CreateNewPost, CrearNuevoUsuario, CreateNewComment
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
@@ -123,31 +123,54 @@ def signout(request):
 @login_required
 def timeline(request):
     all_posts = Post.objects.all().order_by('-creado_en')
-    paginator = Paginator(all_posts, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'timeline.html', {
-        'page_obj': page_obj
-    })
+    all_images = Imagen.objects.all()
+    relaciones = PostImagen.objects.all()
+
+    for imagen in all_images:
+        imagen.src = imagen.src.url
+
+        # Crea una instancia de Paginator para paginar los objetos
+    paginator = Paginator(all_posts, 10)  # Muestra 10 publicaciones por página
+
+    page = request.GET.get('page')
+    try:
+        posts_pagina = paginator.page(page)
+    except PageNotAnInteger:
+        # Si la página no es un número entero, muestra la primera página
+        posts_pagina = paginator.page(1)
+    except EmptyPage:
+        # Si la página está fuera de rango, muestra la última página
+        posts_pagina = paginator.page(paginator.num_pages)
+
+    context = {
+        'posts': posts_pagina,
+        'imagenes': all_images,
+        'relaciones': relaciones,
+    }
+    return render(request, 'timeline.html', context)
 
 @login_required
 def post(request, id_post):
     if request.method == 'GET':
         post = get_object_or_404(Post, id=id_post)
+        imagenes_relacionadas = PostImagen.objects.filter(post=post)
         comentarios = Comentario.objects.filter(ref_id=id_post).order_by('creado_en')
         return render(request, 'detalles_post.html', {
             'post': post,
             'comentarios': comentarios,
-            'form': CreateNewComment
+            'form': CreateNewComment,
+            'imagenes_relacionadas': imagenes_relacionadas
         })
     else:
         post = get_object_or_404(Post, id=id_post)
+        imagenes_relacionadas = PostImagen.objects.filter(post=post)
         Comentario.objects.create(ref=post, user=request.user, contenido=request.POST['contenido'])
         comentarios = Comentario.objects.filter(ref_id=id_post).order_by('-creado_en')
         return render(request, 'detalles_post.html', {
             'post': post,
             'comentarios': comentarios,
-            'form': CreateNewComment
+            'form': CreateNewComment,
+            'imagenes_relacionadas': imagenes_relacionadas
         })
 
 @login_required
@@ -157,10 +180,18 @@ def new_post(request):
             'form': CreateNewPost()
         })
     else:
-        Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
-                            autor=request.user, level_id=1, receptor_type=1)
-        return redirect('timeline')
-
+        if not request.FILES['imagen']:
+            Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
+                                autor=request.user, level_id=1, receptor_type=1)
+            return redirect('timeline')
+        else: 
+            post = Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
+                                autor=request.user, level_id=1, receptor_type=1)
+            imagen = Imagen.objects.create(src=request.FILES['imagen'],
+                    titulo=request.POST['titulo'], descripcion=request.POST['contenido'],
+                    usuario=request.user,level_id=1)
+            postimg = PostImagen.objects.create(post=post, imagen=imagen)
+            return redirect('timeline')
 @login_required
 def profile(request):
     if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:

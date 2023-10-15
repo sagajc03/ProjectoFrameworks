@@ -6,32 +6,47 @@
 
 <h1>Timeline</h1>
 
-{% for post in page_obj %}
+
+
+{% for post in posts %}
 <article class="card">
     <a href="{% url 'post_details' post.id %}" >
         <h2>{{post.titulo}}</h2>
         <h3>{{post.autor.username}}</h3>
         <p>{{post.contenido}}</p>
-        <h6>{{post.creado_en}}</h6>
     </a>
+        <ul>
+            {% for relacion in relaciones %}
+                {% if relacion.post == post %}
+                    {% for imagen in imagenes %}
+                        {% if relacion.imagen == imagen %}
+                            <li>
+                                <a src="{{ imagen.src }}"><img src="{{  imagen.src }}" alt="{{ imagen.titulo }}"></a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <h6>{{post.creado_en}}</h6>
 </article>
 
 {% endfor %}
+
 <div class="pagination">
     <span class="step-links">
-        {% if page_obj.has_previous %}
+        {% if posts.has_previous %}
             <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            <a href="?page={{ posts.previous_page_number }}">previous</a>
         {% endif %}
         
-        <span class="current-page">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
+        <span class="current-page">Página {{ posts.number }} de {{ posts.paginator.num_pages }}.</span>
         
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}">next</a>
+            <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
         {% endif %}
     </span>
 </div>
+
 {% endblock %}

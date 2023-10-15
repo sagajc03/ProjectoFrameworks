@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ModelForm
 
 
 class CrearNuevoUsuario(forms.Form):
@@ -16,6 +17,7 @@ class CreateNewPost(forms.Form):
     contenido = forms.CharField(label="Detalles", widget=forms.TextInput(attrs={
         'class': 'input'
     }))
+    imagen = forms.ImageField(label='Imagen', allow_empty_file=True)
 
 
 class CreateNewComment(forms.Form):

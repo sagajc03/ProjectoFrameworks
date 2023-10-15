@@ -64,7 +64,7 @@ class Imagen(models.Model):
     """
     Datos para almacenar y hacer refencias a imagenes
     """
-    src = models.CharField(max_length=255)
+    src = models.ImageField(null=True, blank=True, upload_to="images/")
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField()
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
