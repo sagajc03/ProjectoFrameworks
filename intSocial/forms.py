@@ -17,7 +17,7 @@ class CreateNewPost(forms.Form):
     contenido = forms.CharField(label="Detalles", widget=forms.TextInput(attrs={
         'class': 'input'
     }))
-    imagen = forms.ImageField(label='Imagen', allow_empty_file=True)
+    imagen = forms.ImageField(label='Imagen', allow_empty_file=True, required=False)
 
 
 class CreateNewComment(forms.Form):

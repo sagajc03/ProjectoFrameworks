@@ -180,7 +180,7 @@ def new_post(request):
             'form': CreateNewPost()
         })
     else:
-        if not request.FILES['imagen']:
+        if not request.FILES:
             Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
                                 autor=request.user, level_id=1, receptor_type=1)
             return redirect('timeline')
