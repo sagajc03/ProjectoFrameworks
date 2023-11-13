@@ -12,15 +12,15 @@ class CrearNuevoUsuario(forms.Form):
 
 class CreateNewPost(forms.Form):
     titulo = forms.CharField(label="Titulo", max_length=50, widget=forms.TextInput(attrs={
-        'class': 'input'
+        'class': 'form-control'
     }))
     contenido = forms.CharField(label="Detalles", widget=forms.TextInput(attrs={
-        'class': 'input'
+        'class': 'form-control'
     }))
-    imagen = forms.ImageField(label='Imagen', allow_empty_file=True, required=False)
+    imagen = forms.ImageField(label='Imagen', allow_empty_file=True, required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
 
 
 class CreateNewComment(forms.Form):
     contenido = forms.CharField(label="Escribe tu comentario", widget=forms.TextInput(attrs={
-        'class': 'input'
+        'class': 'form-control'
     }))
