@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Usuario, Post, Comentario, Imagen, PostImagen
+from .models import Usuario, Post, Comentario, Imagen, PostImagen, Profile
 from .forms import CreateNewPost, CrearNuevoUsuario, CreateNewComment
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
@@ -21,9 +21,9 @@ def index(request):
 
 
 def usuario(request):
-    usuarios = Usuario.objects.all()
+
     return render(request, "usuario.html", {
-        'usuarios': usuarios
+
     })
 
 
@@ -152,11 +152,13 @@ def new_post(request):
 
 @login_required
 def profile(request):
-    if 'logged_in' in request.COOKIES and 'username' in request.COOKIES:
-        context = {
-            'username': request.COOKIES['username'],
-            'login_status': request.COOKIES.get('logged_in'),
-        }
-        return render(request, 'profile.html', context)
-    else:
-        return render(request, 'profile.html')
+    try:
+        perfil = Profile.objects.get(usuario=request.user)
+    except Profile.DoesNotExist:
+        perfil = Profile.objects.create(usuario=request.user)
+
+    return render(request, 'profile.html', {'profile': perfil})
+
+@login_required
+def profile_settings(request):
+    return render(request, 'profiles_settings.html')

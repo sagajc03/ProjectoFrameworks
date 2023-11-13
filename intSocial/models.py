@@ -32,19 +32,19 @@ class Profile(models.Model):
     """
     Datos extras que tiene un usuario
     """
-    fecha_nacimiento = models.DateField()
-    genero = models.CharField(max_length=10)
-    imagen = models.CharField(max_length=255)
-    imagen_header = models.CharField(max_length=255)
-    titulo = models.CharField(max_length=255)
-    bio = models.CharField(max_length=255)
-    info_contacto = models.TextField()
-    email_publico = models.CharField(max_length=255)
+    fecha_nacimiento = models.DateField(null=True)
+    genero = models.CharField(max_length=10, null=True)
+    imagen = models.CharField(max_length=255, null=True)
+    imagen_header = models.CharField(max_length=255, null=True)
+    titulo = models.CharField(max_length=255, null=True)
+    bio = models.CharField(max_length=255, null=True)
+    info_contacto = models.TextField(null=True)
+    email_publico = models.CharField(max_length=255, null=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    level = models.ForeignKey(Level, on_delete=models.CASCADE)
+    level = models.ForeignKey(Level, on_delete=models.CASCADE, default=1)
 
-    def __str__(self):
-        return self.usuario.username + ' ' + self.titulo
+    # def __str__(self):
+    #     return self.usuario.username + ' ' + self.titulo
 
 
 class Portafolio(models.Model):

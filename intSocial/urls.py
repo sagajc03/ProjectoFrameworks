@@ -11,5 +11,6 @@ urlpatterns = [
     path('newpost/', views.new_post, name="new_post"),
     path('usuario/', views.usuario, name="usuario"),
     path('profile/', views.profile, name="profile"),
-    path('logout/', views.signout, name='logout')
+    path('logout/', views.signout, name='logout'),
+    path('profile/settings/', views.profile_settings, name="profile_settings")
 ]

@@ -1,27 +1,10 @@
 body{
     background-color: #202020;
-    color: whitesmoke;
+    color:azure;
 }
 
-.navbar {
-    background-color: #404040;
-    padding: 5px 0;
-}
-
-.navbar ul {
-    display: flex;
-    justify-content: space-between;
-}
-.navbar ul li {
-    list-style: none;
-}
 .navbar ul li a {
-    color: white;
     text-decoration: none;
-}
-
-.navbar ul li a:hover{
-   color: aquamarine;
 }
 
 .container {
@@ -48,6 +31,12 @@ body{
 .card h6 {
     text-decoration: none;
     color: black;
+}
+
+.card h5,
+.card h6{
+    text-decoration: none;
+    color: gray;
 }
 
 .input {

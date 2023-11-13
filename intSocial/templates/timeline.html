@@ -9,10 +9,12 @@
 
 
 {% for post in posts %}
-<article class="card">
+<article class="card container">
     <a href="{% url 'post_details' post.id %}" >
-        <h2>{{post.titulo}}</h2>
-        <h3>{{post.autor.username}}</h3>
+        <div class="d-flex justify-content-start">
+            <h6 class="px-4">{{post.autor.username}}</h6>
+            <h2 class="px-1">{{post.titulo}}</h2>
+        </div>
         <p>{{post.contenido}}</p>
     </a>
         <ul>
