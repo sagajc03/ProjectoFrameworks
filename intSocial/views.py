@@ -9,6 +9,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
+from django.contrib import messages
+
 
 
 # Create your views here.
@@ -152,13 +155,52 @@ def new_post(request):
 
 @login_required
 def profile(request):
+    user = request.user
     try:
         perfil = Profile.objects.get(usuario=request.user)
     except Profile.DoesNotExist:
         perfil = Profile.objects.create(usuario=request.user)
 
-    return render(request, 'profile.html', {'profile': perfil})
+    return render(request, 'profile.html', {
+        'profile': perfil,
+        'user':user
+    })
+
 
 @login_required
 def profile_settings(request):
-    return render(request, 'profiles_settings.html')
+    if request.method == 'GET':
+        try:
+            perfil = Profile.objects.get(usuario=request.user)
+        except Profile.DoesNotExist:
+            perfil = Profile.objects.create(usuario=request.user)
+        return render(request, 'profiles_settings.html', {
+            'perfil': perfil
+        })
+    else:
+        perfil = Profile.objects.get(usuario=request.user)
+
+        perfil.titulo = request.POST['titulo']
+        perfil.bio = request.POST['bio']
+
+        fecha_nacimiento_str = request.POST.get('fecha_nacimiento', '')
+        try:
+            perfil.fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%m/%d/%Y').date()
+        except ValueError:
+            perfil.fecha_nacimiento = None
+
+        perfil.info_contacto = request.POST['info_contacto']
+        perfil.email_publico = request.POST['email_publico']
+        
+        if 'imagen' in request.FILES:
+            perfil.imagen = request.FILES['imagen']
+        if 'imagen_header' in request.FILES:
+            perfil.imagen_header = request.FILES['imagen_header']
+
+        try:
+            perfil.save()
+            messages.success(request, 'Profile succesfuly updated.')
+        except Exception as e:
+            messages.error(request, f'An error happened')
+
+        return redirect('profile')

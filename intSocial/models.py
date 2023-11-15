@@ -34,8 +34,8 @@ class Profile(models.Model):
     """
     fecha_nacimiento = models.DateField(null=True)
     genero = models.CharField(max_length=10, null=True)
-    imagen = models.CharField(max_length=255, null=True)
-    imagen_header = models.CharField(max_length=255, null=True)
+    imagen = models.ImageField(null=True, blank=True, upload_to="images/")
+    imagen_header = models.ImageField(null=True, blank=True, upload_to="images/")
     titulo = models.CharField(max_length=255, null=True)
     bio = models.CharField(max_length=255, null=True)
     info_contacto = models.TextField(null=True)
