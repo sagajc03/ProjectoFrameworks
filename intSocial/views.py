@@ -13,7 +13,6 @@ from datetime import datetime
 from django.contrib import messages
 
 
-
 # Create your views here.
 
 def index(request):
@@ -24,7 +23,6 @@ def index(request):
 
 
 def usuario(request):
-
     return render(request, "usuario.html", {
 
     })
@@ -71,6 +69,7 @@ def signin(request):
         else:
             login(request, user)
             return redirect('timeline')
+
 
 def signout(request):
     logout(request)
@@ -163,7 +162,7 @@ def profile(request):
 
     return render(request, 'profile.html', {
         'profile': perfil,
-        'user':user
+        'user': user
     })
 
 
@@ -191,7 +190,7 @@ def profile_settings(request):
 
         perfil.info_contacto = request.POST['info_contacto']
         perfil.email_publico = request.POST['email_publico']
-        
+
         if 'imagen' in request.FILES:
             perfil.imagen = request.FILES['imagen']
         if 'imagen_header' in request.FILES:
