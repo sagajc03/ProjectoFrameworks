@@ -30,8 +30,8 @@ Opciones
                 <div class="col-sm-4">
                     <div class="input-group date" id="fecha_nacimiento">
                         {% with formatted_fecha=perfil.fecha_nacimiento|date:"m/d/Y" %}
-            <input type="text" class="form-control" value="{{formatted_fecha}}" name="fecha_nacimiento" readonly="true">
-            {% endwith %}
+                        <input type="text" class="form-control" value="{{formatted_fecha}}" name="fecha_nacimiento" readonly="true">
+                    {% endwith %}
                         <span class="input-group-append">
                             <span class="input-group-text bg-white d-block">
                                 <i class="fa fa-calendar"></i>
@@ -57,9 +57,9 @@ Opciones
             </div>
         </div>
         
-    
+        
         <div id="preview-container1">
-            <img id="preview-image1" src="{{perfil.imagen.url}}" alt="Vista previa" style="display: block;" width="100px">
+            <img id="preview-image1" src="{% if perfil.imagen %} {{perfil.imagen.url}} {% endif %}" alt="Vista previa" style="display: block;" width="100px">
         </div>
     
         <div class="mb-3">
@@ -69,7 +69,7 @@ Opciones
         </div>
 
         <div id="preview-container2">
-            <img id="preview-image2" src="{{perfil.imagen_header.url}}" alt="Vista previa" style="display: block;" width="500px">
+            <img id="preview-image2" src="{% if perfil.imagen_header %} {{perfil.imagen_header.url}} {% endif %}" alt="Vista previa" style="display: block;" width="500px">
         </div>
         <div class="mb-3">
             <label for="imagen_header" class="form-label">Banner image (we suggest a 3:12 ratio to avoid
