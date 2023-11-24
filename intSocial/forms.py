@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 
 
 class CrearNuevoUsuario(forms.Form):
+    """
+    FUERA DE USO
+    """
     nombre = forms.CharField(label='Nombre', max_length=50)
     apellidos = forms.CharField(label='Apellidos', max_length=50)
     username = forms.CharField(label='Nombre de Usuario', max_length=50)
@@ -13,6 +16,9 @@ class CrearNuevoUsuario(forms.Form):
 
 
 class CreateNewPost(forms.Form):
+    """
+    Permite crear una publicacion nueva
+    """
     titulo = forms.CharField(label="Titulo", max_length=50, widget=forms.TextInput(attrs={
         'class': 'form-control'
     }))
@@ -23,11 +29,17 @@ class CreateNewPost(forms.Form):
 
 
 class CreateNewComment(forms.Form):
+    """
+    Permite publicar un comentario
+    """
     contenido = forms.CharField(label="Escribe tu comentario", widget=forms.TextInput(attrs={
         'class': 'form-control'
     }))
 
 class UpdateUserForm(UserChangeForm):
+    """
+    Hace uso del Form de django para cambiar opciones del usuario
+    """
     class Meta:
         model = User
         fields = ('username', 'email','first_name', 'last_name')

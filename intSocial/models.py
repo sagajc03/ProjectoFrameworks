@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Usuario(models.Model):
     """
-    Datos necesarios de un usuario
+    Datos necesarios de un usuario, NO USADO,
+    CAMBIADO POR EL DE DEFECTO DE DJANGO
     """
     nombre = models.CharField(max_length=50)
     apellidos = models.CharField(max_length=50)
@@ -78,6 +79,9 @@ class Imagen(models.Model):
 
 
 class Post(models.Model):
+    """
+    Post o publicaciones
+    """
     titulo = models.CharField(max_length=50)
     contenido = models.TextField()
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -133,6 +137,9 @@ class Notificaciones(models.Model):
 
 
 class Grupos(models.Model):
+    """
+    Considerando no usarlo
+    """
     imagen = models.CharField(max_length=255)
     titulo = models.CharField(max_length=100)
     descripcion = models.TextField()

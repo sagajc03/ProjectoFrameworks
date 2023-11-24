@@ -15,10 +15,11 @@ from django.contrib.auth import update_session_auth_hash
 
 
 # Create your views here.
-"""
-Inicio que no tiene nada
-"""
+
 def index(request):
+    """
+    Inicio que no tiene nada
+    """
     title = 'Soy el inicio awebito'
     return render(request, "index.html", {
         'title': title
@@ -31,12 +32,12 @@ def usuario(request):
     })
 
 
-"""
-Pagina que te permite crear un nuevo usuario
-Despues de crear usuario inicia sesion haciendo
-uso de los metodos de django
-"""
 def signup(request):
+    """
+    Pagina que te permite crear un nuevo usuario
+    Despues de crear usuario inicia sesion haciendo
+    uso de los metodos de django
+    """
     if request.method == 'GET':
         return render(request, 'crear_usuario.html', {
             'form': UserCreationForm
@@ -59,11 +60,12 @@ def signup(request):
             'error': 'Password do not match'
         })
 
-"""
-Iniciar sesion en la pagina usando los metodos
-de django
-"""
+
 def signin(request):
+    """
+    Iniciar sesion en la pagina usando los metodos
+    de django
+    """
     if request.method == 'GET':
         return render(request, 'login.html', {
             'form': AuthenticationForm
@@ -81,19 +83,20 @@ def signin(request):
             login(request, user)
             return redirect('timeline')
 
-"""
-Sale de la sesion usando metodo de django
-"""
 def signout(request):
+    """
+    Sale de la sesion usando metodo de django
+    """
     logout(request)
     return redirect('index')
 
-"""
-Crea un paginator para mostrar 10 publicaciones a la vez,
-se debe de estar logeado para ver
-"""
+
 @login_required
 def timeline(request):
+    """
+    Crea un paginator para mostrar 10 publicaciones a la vez,
+    se debe de estar logeado para ver
+    """
     all_posts = Post.objects.all().order_by('-creado_en')
     all_images = Imagen.objects.all()
     relaciones = PostImagen.objects.all()
@@ -121,12 +124,13 @@ def timeline(request):
     }
     return render(request, 'timeline.html', context)
 
-"""
-Permite entrar a los detallaes de una publicacion y
-permite tambien poner un comentario en dicha publicacion
-"""
+
 @login_required
 def post(request, id_post):
+    """
+    Permite entrar a los detallaes de una publicacion y
+    permite tambien poner un comentario en dicha publicacion
+    """
     if request.method == 'GET':
         post = get_object_or_404(Post, id=id_post)
         imagenes_relacionadas = PostImagen.objects.filter(post=post)
@@ -150,11 +154,11 @@ def post(request, id_post):
         })
 
 
-"""
-Permite crear una publicacion, se pueden añadir imagenes
-"""
 @login_required
 def new_post(request):
+    """
+    Permite crear una publicacion, se pueden añadir una imagen
+    """
     if request.method == 'GET':
         return render(request, 'new_post.html', {
             'form': CreateNewPost()
@@ -173,11 +177,12 @@ def new_post(request):
             postimg = PostImagen.objects.create(post=post, imagen=imagen)
             return redirect('timeline')
 
-"""
-Permite ver las publicaciones del usuario
-"""
 @login_required
 def profile(request, username=None):
+    """
+    Permite ver las publicaciones del usuario
+    y la informacion personal que este haya compartido
+    """
     user = get_object_or_404(User, username=username)
     try:
         perfil = Profile.objects.get(usuario=user)
@@ -199,14 +204,20 @@ def profile(request, username=None):
         'relaciones': relaciones,
     })
 
-
 def test(request):
+    """
+    Pagina de test, no hay nada mas que el menu
+    """
     return render(request, 'layouts/base.html',{
         'request':request
     })
 
 @login_required
 def profile_settings(request):
+    """
+    Permite modificar opciones del perfil (profile) y acceso a 
+    modificar cosas del usuario
+    """
     if request.method == 'GET':
         try:
             perfil = Profile.objects.get(usuario=request.user)
@@ -216,6 +227,7 @@ def profile_settings(request):
             'perfil': perfil
         })
     else:
+        #Codigo para guardar los datos del perfil
         perfil = Profile.objects.get(usuario=request.user)
 
         perfil.titulo = request.POST['titulo']
@@ -245,6 +257,10 @@ def profile_settings(request):
 
 @login_required
 def user_settings(request):
+    """
+    Configurar cosas del usuario haciendo uso 
+    de metodos de django
+    """
     if request.method == 'POST':
         user_form = UpdateUserForm(request.POST, instance=request.user)
 
