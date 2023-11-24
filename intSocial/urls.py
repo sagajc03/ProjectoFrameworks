@@ -7,10 +7,12 @@ urlpatterns = [
     path('login/', views.signin, name="login"),
     path('signup/', views.signup, name="signup"),
     path('timeline/', views.timeline, name="timeline"),
-    path('post/<int:id_post>', views.post, name="post_details"),
+    path('post/<int:id_post>/', views.post, name="post_details"),
     path('newpost/', views.new_post, name="new_post"),
     path('usuario/', views.usuario, name="usuario"),
-    path('profile/', views.profile, name="profile"),
+    path('profile/<str:username>/', views.profile, name="profile"),
     path('logout/', views.signout, name='logout'),
-    path('profile/settings/', views.profile_settings, name="profile_settings")
+    path('profile_settings/', views.profile_settings, name="profile_settings"),
+    path('user_settings', views.user_settings, name='user_settings'),
+    path('test/', views.test)
 ]

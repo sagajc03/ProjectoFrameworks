@@ -1,5 +1,7 @@
 from django import forms
 from django.forms import ModelForm
+from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth.models import User
 
 
 class CrearNuevoUsuario(forms.Form):
@@ -24,3 +26,8 @@ class CreateNewComment(forms.Form):
     contenido = forms.CharField(label="Escribe tu comentario", widget=forms.TextInput(attrs={
         'class': 'form-control'
     }))
+
+class UpdateUserForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ('username', 'email','first_name', 'last_name')

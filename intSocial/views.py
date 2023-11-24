@@ -3,18 +3,21 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Usuario, Post, Comentario, Imagen, PostImagen, Profile
-from .forms import CreateNewPost, CrearNuevoUsuario, CreateNewComment
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .forms import CreateNewPost, CrearNuevoUsuario, CreateNewComment, UpdateUserForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 
 
 # Create your views here.
-
+"""
+Inicio que no tiene nada
+"""
 def index(request):
     title = 'Soy el inicio awebito'
     return render(request, "index.html", {
@@ -28,6 +31,11 @@ def usuario(request):
     })
 
 
+"""
+Pagina que te permite crear un nuevo usuario
+Despues de crear usuario inicia sesion haciendo
+uso de los metodos de django
+"""
 def signup(request):
     if request.method == 'GET':
         return render(request, 'crear_usuario.html', {
@@ -51,7 +59,10 @@ def signup(request):
             'error': 'Password do not match'
         })
 
-
+"""
+Iniciar sesion en la pagina usando los metodos
+de django
+"""
 def signin(request):
     if request.method == 'GET':
         return render(request, 'login.html', {
@@ -70,12 +81,17 @@ def signin(request):
             login(request, user)
             return redirect('timeline')
 
-
+"""
+Sale de la sesion usando metodo de django
+"""
 def signout(request):
     logout(request)
     return redirect('index')
 
-
+"""
+Crea un paginator para mostrar 10 publicaciones a la vez,
+se debe de estar logeado para ver
+"""
 @login_required
 def timeline(request):
     all_posts = Post.objects.all().order_by('-creado_en')
@@ -105,7 +121,10 @@ def timeline(request):
     }
     return render(request, 'timeline.html', context)
 
-
+"""
+Permite entrar a los detallaes de una publicacion y
+permite tambien poner un comentario en dicha publicacion
+"""
 @login_required
 def post(request, id_post):
     if request.method == 'GET':
@@ -131,6 +150,9 @@ def post(request, id_post):
         })
 
 
+"""
+Permite crear una publicacion, se pueden añadir imagenes
+"""
 @login_required
 def new_post(request):
     if request.method == 'GET':
@@ -151,20 +173,37 @@ def new_post(request):
             postimg = PostImagen.objects.create(post=post, imagen=imagen)
             return redirect('timeline')
 
-
+"""
+Permite ver las publicaciones del usuario
+"""
 @login_required
-def profile(request):
-    user = request.user
+def profile(request, username=None):
+    user = get_object_or_404(User, username=username)
     try:
-        perfil = Profile.objects.get(usuario=request.user)
+        perfil = Profile.objects.get(usuario=user)
     except Profile.DoesNotExist:
-        perfil = Profile.objects.create(usuario=request.user)
+        perfil = Profile.objects.create(usuario=user)
+
+    posts = Post.objects.filter(autor=user).order_by('-creado_en')
+    all_images = Imagen.objects.all()
+    relaciones = PostImagen.objects.all()
+
+    for imagen in all_images:
+        imagen.src = imagen.src.url
 
     return render(request, 'profile.html', {
         'profile': perfil,
-        'user': user
+        'user': user,
+        'posts': posts,
+        'imagenes': all_images,
+        'relaciones': relaciones,
     })
 
+
+def test(request):
+    return render(request, 'layouts/base.html',{
+        'request':request
+    })
 
 @login_required
 def profile_settings(request):
@@ -202,4 +241,17 @@ def profile_settings(request):
         except Exception as e:
             messages.error(request, f'An error happened')
 
-        return redirect('profile')
+        return redirect('profile', username=request.user.username)
+
+@login_required
+def user_settings(request):
+    if request.method == 'POST':
+        user_form = UpdateUserForm(request.POST, instance=request.user)
+
+        if user_form.is_valid():
+            user_form.save()
+            return redirect('profile', username=request.user.username)
+    else:
+        user_form = UpdateUserForm(instance=request.user)
+
+    return render(request, 'user_settings.html', {'user_form': user_form})

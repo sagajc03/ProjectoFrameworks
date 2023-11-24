@@ -65,3 +65,15 @@ body{
     max-width: 100%;
     max-height: 100%;
 }
+
+.banner {
+    width: 1200px;
+    max-height: 300px;
+}
+
+.pfp{
+    width: 100px;
+    max-height: 100px;
+    border: 2px #F0EFFF;
+    border-style: solid;
+}

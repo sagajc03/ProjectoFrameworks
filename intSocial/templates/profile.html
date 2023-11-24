@@ -1,5 +1,8 @@
 {%extends 'layouts/base.html'%} 
 {%block content%}
+<div class="banner">
+    <img src="{% if profile.imagen_header %} {{profile.imagen_header.url}} {% endif %}"  alt="banner" class="banner">
+</div>
 {% for message in messages %}
     <div class="alert alert-{{ message.tags }}">
         {{ message }}
@@ -7,6 +10,20 @@
 {% endfor %}
 <div class="container">
     <div class="row">
+        <div class="col-sm-2">
+            <img src="{% if profile.imagen %} {{profile.imagen.url}} {% endif %}"  alt="profile-picture" class="pfp">
+        </div>
+        <div class="col-sm-5">
+            <div class="row">
+                <h3>{{ user.username }}</h3>
+            </div>
+            <div class="row">
+                <h4>{{ user.first_name }} {{user.last_name}}</h4>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <p>{{ profile.info_contacto }}</p>
+        </div>
         <a href="{% url 'profile_settings' %}" class="col-sm-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
                 <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
@@ -14,6 +31,33 @@
             </svg>
         </a>
     </div>
+</div>
+<div class="container">
+    {% for post in posts %}
+    <article class="card container">
+        <a href="{% url 'post_details' post.id %}" >
+            <div class="d-flex justify-content-start">
+                <h6 class="px-4">{{post.autor.username}}</h6>
+                <h2 class="px-1">{{post.titulo}}</h2>
+            </div>
+            <p>{{post.contenido}}</p>
+        </a>
+            <ul>
+                {% for relacion in relaciones %}
+                    {% if relacion.post == post %}
+                        {% for imagen in imagenes %}
+                            {% if relacion.imagen == imagen %}
+                                <li>
+                                    <a src="{{ imagen.src }}"><img src="{{  imagen.src }}" alt="{{ imagen.titulo }}"></a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            <h6>{{post.creado_en}}</h6>
+    </article>
+    {% endfor %}
 </div>
 
 {%endblock%}
