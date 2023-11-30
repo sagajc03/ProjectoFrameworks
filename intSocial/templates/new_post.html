@@ -6,10 +6,10 @@
 
 <h1>Crear un post nuevo</h1>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{form}}
-    <button>
+    <button class="btn btn-primary mb-3">
         Publicar
     </button>
 </form>

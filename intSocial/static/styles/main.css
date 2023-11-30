@@ -1,27 +1,10 @@
 body{
     background-color: #202020;
-    color: whitesmoke;
+    color:azure;
 }
 
-.navbar {
-    background-color: #404040;
-    padding: 5px 0;
-}
-
-.navbar ul {
-    display: flex;
-    justify-content: space-between;
-}
-.navbar ul li {
-    list-style: none;
-}
 .navbar ul li a {
-    color: white;
     text-decoration: none;
-}
-
-.navbar ul li a:hover{
-   color: aquamarine;
 }
 
 .container {
@@ -31,7 +14,7 @@ body{
 }
 
 .card {
-    background-color: whitesmoke;
+    background-color: #F0EFFF;
     padding: 10PX;
     margin-bottom: 2PX;
     color: black;
@@ -50,9 +33,47 @@ body{
     color: black;
 }
 
+.card h5,
+.card h6{
+    text-decoration: none;
+    color: gray;
+}
+
 .input {
     background: wheat;
     padding: 10px;
     text-align: center;
     display: block;
+}
+.comentario{
+    background-color: #FFF1E5;
+    padding: 10PX;
+    margin-bottom: 2PX;
+    color: black;
+}
+
+#preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    border: 2px dashed #ccc;
+    margin-bottom: 10px;
+}
+
+#preview-image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.banner {
+    width: 1200px;
+    max-height: 300px;
+}
+
+.pfp{
+    width: 100px;
+    max-height: 100px;
+    border: 2px #F0EFFF;
+    border-style: solid;
 }

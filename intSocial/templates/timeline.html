@@ -6,16 +6,49 @@
 
 <h1>Timeline</h1>
 
+
+
 {% for post in posts %}
-<article class="card">
-    <a href="" >
-        <h2 class="carda">{{post.titulo}}</h2>
-        <h3 class="carda">{{post.autor.username}}</h3>
-        <p class="carda">{{post.contenido}}</p>
-        <h6 class="carda">{{post.creado_en}}</h6>
+<article class="card container">
+    <a href="{% url 'post_details' post.id %}" >
+        <div class="d-flex justify-content-start">
+            <h6 class="px-4">{{post.autor.username}}</h6>
+            <h2 class="px-1">{{post.titulo}}</h2>
+        </div>
+        <p>{{post.contenido}}</p>
     </a>
+        <ul>
+            {% for relacion in relaciones %}
+                {% if relacion.post == post %}
+                    {% for imagen in imagenes %}
+                        {% if relacion.imagen == imagen %}
+                            <li>
+                                <a src="{{ imagen.src }}"><img src="{{  imagen.src }}" alt="{{ imagen.titulo }}"></a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <h6>{{post.creado_en}}</h6>
 </article>
 
 {% endfor %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if posts.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ posts.previous_page_number }}">previous</a>
+        {% endif %}
+        
+        <span class="current-page">Página {{ posts.number }} de {{ posts.paginator.num_pages }}.</span>
+        
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}">next</a>
+            <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 
 {% endblock %}

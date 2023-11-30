@@ -3,9 +3,11 @@
 {%block content%}
 <h1>Crear Usuario</h1>
 
+{{error}}
+
 <form method="POST">
     {%csrf_token%}
     {{form.as_p}}
-    <button>Save</button>
+    <button>Sign up</button>
 </form>
 {%endblock%}

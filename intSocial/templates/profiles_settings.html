@@ -1,0 +1,119 @@
+{%extends 'layouts/base.html'%}
+{%block content%}
+Opciones
+<div class="p-5 ">
+    <form class="row g-3" id="profile_form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3 row">
+            <label for="titulo" class="col-sm-2 col-form-label">Title</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="titulo" placeholder="Title" value="{{perfil.titulo}}" name="titulo">
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="bio" class="col-sm-2 col-form-label">Biography</label>
+            <textarea rows="3" class="form-control" id="bio" name="bio">{{perfil.bio}}</textarea>
+        </div>
+
+        <div class="mb-3 row">
+            <script type="text/javascript">
+                $(function () {
+                    // Inicializar el datepicker con el formato deseado
+                    $('#fecha_nacimiento').datepicker({
+                        dateFormat: 'mm/dd/yy',
+                    });
+                });
+            </script>
+            <div class="row form-group">
+                <label for="fecha_nacimiento" class="col-sm-1 col-form-label">Date</label>
+                <div class="col-sm-4">
+                    <div class="input-group date" id="fecha_nacimiento">
+                        {% with formatted_fecha=perfil.fecha_nacimiento|date:"m/d/Y" %}
+                        <input type="text" class="form-control" value="{{formatted_fecha}}" name="fecha_nacimiento" readonly="true">
+                    {% endwith %}
+                        <span class="input-group-append">
+                            <span class="input-group-text bg-white d-block">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+
+        <div class="mb-3 row">
+            <label for="info_contacto" class="col-sm-2 col-form-label">Contact info</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="info_contacto" name="info_contacto" placeholder="Contact info..." value="{{perfil.info_contacto}}">
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="email_publico" class="col-sm-2 col-form-label">Public email</label>
+            <div class="col-sm-10">
+                <input type="email" class="form-control" id="email_publico" name="email_publico" placeholder="example@example.com" value="{{perfil.email_publico}}">
+            </div>
+        </div>
+        
+        
+        <div id="preview-container1">
+            <img id="preview-image1" src="{% if perfil.imagen %} {{perfil.imagen.url}} {% endif %}" alt="Vista previa" style="display: block;" width="100px">
+        </div>
+    
+        <div class="mb-3">
+            <label for="imagen" class="form-label">Profile picture (to avoid deformations we recommend an square
+                picture)</label>
+            <input class="form-control" type="file" id="imagen" name="imagen">
+        </div>
+
+        <div id="preview-container2">
+            <img id="preview-image2" src="{% if perfil.imagen_header %} {{perfil.imagen_header.url}} {% endif %}" alt="Vista previa" style="display: block;" width="500px">
+        </div>
+        <div class="mb-3">
+            <label for="imagen_header" class="form-label">Banner image (we suggest a 3:12 ratio to avoid
+                deformations)</label>
+            <input class="form-control" type="file" id="imagen_header" accept="image/*" name="imagen_header">
+        </div>
+
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">Update</button>
+        </div>
+    </form>
+    <hr>
+    <a href="{% url 'user_settings' %}" class="btn btn-info">User settings</a>
+</div>
+
+<script>
+    // Obtener referencias a los elementos del DOM
+    const formulario = document.getElementById('profile_form');
+    const imagenInput = document.getElementById('imagen');
+    const imagen_headerInput = document.getElementById('imagen_header');
+    const previewContainer1 = document.getElementById('preview-container1');
+    const previewContainer2 = document.getElementById('preview-container2');
+    const previewImage1 = document.getElementById('preview-image1');
+    const previewImage2 = document.getElementById('preview-image2');
+    // Configurar un evento de cambio en el input de imagen
+    imagenInput.addEventListener('change', function () {
+        const file = this.files[0];
+
+        if (file) {
+            // Mostrar la vista previa de la imagen seleccionada
+            previewImage1.src = URL.createObjectURL(file);
+        }
+    });
+
+    imagen_headerInput.addEventListener('change', function () {
+        const file = this.files[0];
+
+        if (file) {
+            // Mostrar la vista previa de la imagen seleccionada
+            previewImage2.src = URL.createObjectURL(file);
+        } 
+    });
+</script>
+
+
+
+{%endblock%}
