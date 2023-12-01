@@ -8,11 +8,12 @@
 
 <article class="card">
         <h2>{{post.titulo}}</h2>
-        <h3>{{post.autor.username}}</h3>
+        <a href="{% url 'profile' post.autor.username %}" >
+            <h3>{{post.autor.username}}</h3>
+        </a>
         <p>{{post.contenido}}</p>
         <h6>{{post.creado_en}}</h6>
 
-        <h2>Imágenes relacionadas</h2>
         <ul>
             {% for imagen_relacionada in imagenes_relacionadas %}
                 <li>

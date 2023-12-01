@@ -14,5 +14,6 @@ urlpatterns = [
     path('logout/', views.signout, name='logout'),
     path('profile_settings/', views.profile_settings, name="profile_settings"),
     path('user_settings', views.user_settings, name='user_settings'),
-    path('test/', views.test)
+    path('test/', views.test),
+    path('search/<str:categoria>',views.search, name="search")
 ]

@@ -166,11 +166,11 @@ def new_post(request):
     else:
         if not request.FILES:
             Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
-                                autor=request.user, level_id=1, receptor_type=1)
+                                autor=request.user, level_id=1, receptor_type=1,categoria=request.POST['categoria'])
             return redirect('timeline')
         else:
             post = Post.objects.create(titulo=request.POST['titulo'], contenido=request.POST['contenido'],
-                                       autor=request.user, level_id=1, receptor_type=1)
+                                       autor=request.user, level_id=1, receptor_type=1, categoria=request.POST['categoria'])
             imagen = Imagen.objects.create(src=request.FILES['imagen'],
                                            titulo=request.POST['titulo'], descripcion=request.POST['contenido'],
                                            usuario=request.user, level_id=1)
@@ -271,3 +271,22 @@ def user_settings(request):
         user_form = UpdateUserForm(instance=request.user)
 
     return render(request, 'user_settings.html', {'user_form': user_form})
+
+@login_required
+def search(request, categoria='Off-topic'):
+    """
+    Buscar post en base a las categorias
+    """
+    posts = Post.objects.filter(categoria=categoria).order_by('-creado_en')
+    all_images = Imagen.objects.all()
+    relaciones = PostImagen.objects.all()
+
+    for imagen in all_images:
+        imagen.src = imagen.src.url
+
+    return render(request, 'search.html', {
+        'posts': posts,
+        'imagenes': all_images,
+        'relaciones': relaciones,
+    })
+

@@ -1,0 +1,34 @@
+{%extends 'layouts/base.html'%}
+
+{%block content%}
+{% for post in posts %}
+<article class="card container">
+    <a href="{% url 'post_details' post.id %}" >
+        <div class="d-flex justify-content-start">
+            <h6 class="px-4">{{post.autor.username}}</h6>
+            <h2 class="px-1">{{post.titulo}}</h2>
+        </div>
+        <p>{{post.contenido}}</p>
+    </a>
+        <ul>
+            {% for relacion in relaciones %}
+                {% if relacion.post == post %}
+                    {% for imagen in imagenes %}
+                        {% if relacion.imagen == imagen %}
+                            <li>
+                                <a src="{{ imagen.src }}"><img src="{{  imagen.src }}" alt="{{ imagen.titulo }}"></a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <div class="row">
+            <h6 class="col-sm-2">{{post.creado_en}}</h6>
+            <h5 class="col-sm-8">{{post.categoria}}</h5>
+        </div>
+        
+</article>
+
+{% endfor %}
+{%endblock%}

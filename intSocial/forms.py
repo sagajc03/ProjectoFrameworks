@@ -26,6 +26,26 @@ class CreateNewPost(forms.Form):
         'class': 'form-control'
     }))
     imagen = forms.ImageField(label='Imagen', allow_empty_file=True, required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
+    categorias = [
+        ('Off-topic','Off-topic'),
+        ('Food', 'Food'),
+        ('Cars', 'Cars'),
+        ('Beauty','Beauty'),
+        ('Sports','Sports'),
+        ('Electronics','Electronics'),
+        ('Handmade','Handmade'),
+        ('Housewares','Housewares'),
+        ('Music','Music'),
+        ('Toys','Toys'),
+        ('Books','Books'),
+        ('Pets','Pets'),
+        ('Clothes','Clothes'),
+        ('Videogames','Videogames'),
+    ]
+    categoria = forms.ChoiceField(
+        choices=categorias,
+        widget=forms.Select(attrs={'class':'form-control'})
+    )
 
 
 class CreateNewComment(forms.Form):

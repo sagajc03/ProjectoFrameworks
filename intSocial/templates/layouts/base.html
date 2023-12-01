@@ -44,6 +44,23 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'new_post' %}">New Post</a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Search</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'search' 'Off-topic' %}">Off-topic</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Food' %}">Food</a></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Cars' %}">Cars</a></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Beauty' %}">Beauty</a></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Sports' %}">Sports</a></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Electronics' %}">Electronics</a></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Handmade' %}">Handmade</a></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Housewares' %}">Housewares</a></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Music' %}">Music</a></li>
+                      <li><a class="dropdown-item" href="{% url 'search' 'Toys' %}">Toys</a></li>
+                    </ul>
+                  </li>
+                
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'profile' username=request.user.username %}">Profile</a>
                 </li>

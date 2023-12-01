@@ -88,6 +88,7 @@ class Post(models.Model):
     level = models.ForeignKey(Level, on_delete=models.CASCADE)
     creado_en = models.DateTimeField(auto_now_add=True)
     receptor_type = models.IntegerField()
+    categoria = models.CharField(max_length=50,null=True)
     post_type = models.IntegerField(default=1)
 
     def __str__(self):
