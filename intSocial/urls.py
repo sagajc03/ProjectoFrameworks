@@ -15,5 +15,9 @@ urlpatterns = [
     path('profile_settings/', views.profile_settings, name="profile_settings"),
     path('user_settings', views.user_settings, name='user_settings'),
     path('test/', views.test),
-    path('search/<str:categoria>',views.search, name="search")
+    path('search/<str:categoria>',views.search, name="search"),
+    path('incrementar_like/<int:post_id>/', views.incrementar_like, name='incrementar_like'),
+    path('quitar_like/<int:post_id>/', views.quitar_like, name='quitar_like'),
+    path('incrementar_dislike/<int:post_id>/', views.incrementar_dislike, name='incrementar_dislike'),
+    path('quitar_dislike/<int:post_id>/', views.quitar_dislike, name='quitar_dislike'),
 ]

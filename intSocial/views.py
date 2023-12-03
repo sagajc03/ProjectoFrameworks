@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Usuario, Post, Comentario, Imagen, PostImagen, Profile
+from .models import Usuario, Post, Comentario, Imagen, PostImagen, Profile, Likes
 from .forms import CreateNewPost, CrearNuevoUsuario, CreateNewComment, UpdateUserForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth.models import User
@@ -12,7 +12,8 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
-
+from django.db.models import Count, Case, When, IntegerField
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
@@ -97,9 +98,13 @@ def timeline(request):
     Crea un paginator para mostrar 10 publicaciones a la vez,
     se debe de estar logeado para ver
     """
-    all_posts = Post.objects.all().order_by('-creado_en')
     all_images = Imagen.objects.all()
     relaciones = PostImagen.objects.all()
+    all_posts = Post.objects.annotate(
+    cantidad_likes=Count(Case(When(likes__valor=1, then=1))),
+    cantidad_dislikes=Count(Case(When(likes__valor=2, then=1)))
+    ).order_by('-creado_en')
+    
 
     for imagen in all_images:
         imagen.src = imagen.src.url
@@ -131,26 +136,40 @@ def post(request, id_post):
     Permite entrar a los detallaes de una publicacion y
     permite tambien poner un comentario en dicha publicacion
     """
+    post = get_object_or_404(Post, id=id_post)
+
+    cantidad_likes = Likes.objects.filter(valor=1, ref=post).count()
+    cantidad_dislikes = Likes.objects.filter(valor=2, ref=post).count()
+
+    all_images = Imagen.objects.all()
+    relaciones = PostImagen.objects.all()
+    comentarios = Comentario.objects.filter(ref_id=id_post).order_by('creado_en')
+
+    for imagen in all_images:
+        imagen.src = imagen.src.url
+
     if request.method == 'GET':
-        post = get_object_or_404(Post, id=id_post)
-        imagenes_relacionadas = PostImagen.objects.filter(post=post)
-        comentarios = Comentario.objects.filter(ref_id=id_post).order_by('creado_en')
+
         return render(request, 'detalles_post.html', {
             'post': post,
             'comentarios': comentarios,
             'form': CreateNewComment,
-            'imagenes_relacionadas': imagenes_relacionadas
+            'imagenes': all_images,
+            'relaciones': relaciones,
+            'cantidad_likes':cantidad_likes,
+            'cantidad_dislikes':cantidad_dislikes,
         })
     else:
-        post = get_object_or_404(Post, id=id_post)
-        imagenes_relacionadas = PostImagen.objects.filter(post=post)
         Comentario.objects.create(ref=post, user=request.user, contenido=request.POST['contenido'])
         comentarios = Comentario.objects.filter(ref_id=id_post).order_by('-creado_en')
         return render(request, 'detalles_post.html', {
             'post': post,
             'comentarios': comentarios,
             'form': CreateNewComment,
-            'imagenes_relacionadas': imagenes_relacionadas
+            'imagenes': all_images,
+            'relaciones': relaciones,
+            'cantidad_likes':cantidad_likes,
+            'cantidad_dislikes':cantidad_dislikes,
         })
 
 
@@ -189,7 +208,10 @@ def profile(request, username=None):
     except Profile.DoesNotExist:
         perfil = Profile.objects.create(usuario=user)
 
-    posts = Post.objects.filter(autor=user).order_by('-creado_en')
+    posts = Post.objects.annotate(
+    cantidad_likes=Count(Case(When(likes__valor=1, then=1), output_field=IntegerField())),
+    cantidad_dislikes=Count(Case(When(likes__valor=2, then=1), output_field=IntegerField()))
+    ).filter(autor=user).order_by('-creado_en')
     all_images = Imagen.objects.all()
     relaciones = PostImagen.objects.all()
 
@@ -277,7 +299,10 @@ def search(request, categoria='Off-topic'):
     """
     Buscar post en base a las categorias
     """
-    posts = Post.objects.filter(categoria=categoria).order_by('-creado_en')
+    posts = Post.objects.annotate(
+    cantidad_likes=Count(Case(When(likes__valor=1, then=1), output_field=IntegerField())),
+    cantidad_dislikes=Count(Case(When(likes__valor=2, then=1), output_field=IntegerField()))
+    ).filter(categoria=categoria).order_by('-creado_en')
     all_images = Imagen.objects.all()
     relaciones = PostImagen.objects.all()
 
@@ -290,3 +315,33 @@ def search(request, categoria='Off-topic'):
         'relaciones': relaciones,
     })
 
+
+@require_POST
+def incrementar_like(request, post_id):
+    publicacion = get_object_or_404(Post, pk=post_id)
+    if Likes.objects.filter(usuario=request.user, ref=publicacion, valor=2).exists():
+        quitar_like_dislike(request, post_id, 2)
+    Likes.objects.get_or_create(usuario=request.user, ref=publicacion, valor=1)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@require_POST
+def incrementar_dislike(request, post_id):
+    publicacion = get_object_or_404(Post, pk=post_id)
+    if Likes.objects.filter(usuario=request.user, ref=publicacion, valor=1).exists():
+        quitar_like_dislike(request, post_id, 1)
+    Likes.objects.get_or_create(usuario=request.user, ref=publicacion, valor=2)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@require_POST
+def quitar_like(request, post_id):
+    quitar_like_dislike(request, post_id, 1)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@require_POST
+def quitar_dislike(request, post_id):
+    quitar_like_dislike(request, post_id, 2)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+def quitar_like_dislike(request, post_id, tipo):
+    publicacion = get_object_or_404(Post, pk=post_id)
+    Likes.objects.filter(usuario=request.user, ref=publicacion, valor=tipo).delete()
