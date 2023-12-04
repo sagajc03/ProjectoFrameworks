@@ -59,7 +59,10 @@
                       <li><a class="dropdown-item" href="{% url 'search' 'Music' %}">Music</a></li>
                       <li><a class="dropdown-item" href="{% url 'search' 'Toys' %}">Toys</a></li>
                     </ul>
-                  </li>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'notifications' %}">Notifications {{non_read_notis}} </a>
+                </li>
                 
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'profile' username=request.user.username %}">Profile</a>

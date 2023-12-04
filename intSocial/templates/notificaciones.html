@@ -1,0 +1,20 @@
+{%extends 'layouts/base.html'%} 
+{%block content%}
+
+{% for noti in notis %}
+<article class="card container">
+    <a href="{% url 'post_details' noti.ref.id %}">
+        <b>{{noti.sender}}</b> 
+        {%if noti.not_type == 1 %}
+        ha dado like a tu post
+        {%else%} 
+        ha comentado tu post
+        {%endif%}
+        <br>
+        {{noti.creado_en}}
+    </a>
+
+</article>
+
+{% endfor %}
+{%endblock%}

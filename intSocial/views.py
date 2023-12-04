@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Usuario, Post, Comentario, Imagen, PostImagen, Profile, Likes
+from .models import Usuario, Post, Comentario, Imagen, PostImagen, Profile, Likes, Notificaciones
 from .forms import CreateNewPost, CrearNuevoUsuario, CreateNewComment, UpdateUserForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth.models import User
@@ -98,6 +98,7 @@ def timeline(request):
     Crea un paginator para mostrar 10 publicaciones a la vez,
     se debe de estar logeado para ver
     """
+    non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     all_images = Imagen.objects.all()
     relaciones = PostImagen.objects.all()
     all_posts = Post.objects.annotate(
@@ -126,6 +127,7 @@ def timeline(request):
         'posts': posts_pagina,
         'imagenes': all_images,
         'relaciones': relaciones,
+        'non_read_notis':non_read_notis,
     }
     return render(request, 'timeline.html', context)
 
@@ -136,6 +138,7 @@ def post(request, id_post):
     Permite entrar a los detallaes de una publicacion y
     permite tambien poner un comentario en dicha publicacion
     """
+    non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     post = get_object_or_404(Post, id=id_post)
 
     cantidad_likes = Likes.objects.filter(valor=1, ref=post).count()
@@ -158,10 +161,13 @@ def post(request, id_post):
             'relaciones': relaciones,
             'cantidad_likes':cantidad_likes,
             'cantidad_dislikes':cantidad_dislikes,
+            'non_read_notis':non_read_notis,
         })
     else:
         Comentario.objects.create(ref=post, user=request.user, contenido=request.POST['contenido'])
+        Notificaciones.objects.create(not_type=2, ref=post, receptor=post.autor, sender=request.user)
         comentarios = Comentario.objects.filter(ref_id=id_post).order_by('-creado_en')
+
         return render(request, 'detalles_post.html', {
             'post': post,
             'comentarios': comentarios,
@@ -170,6 +176,7 @@ def post(request, id_post):
             'relaciones': relaciones,
             'cantidad_likes':cantidad_likes,
             'cantidad_dislikes':cantidad_dislikes,
+            'non_read_notis':non_read_notis,
         })
 
 
@@ -178,6 +185,7 @@ def new_post(request):
     """
     Permite crear una publicacion, se pueden añadir una imagen
     """
+    non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     if request.method == 'GET':
         return render(request, 'new_post.html', {
             'form': CreateNewPost()
@@ -202,6 +210,7 @@ def profile(request, username=None):
     Permite ver las publicaciones del usuario
     y la informacion personal que este haya compartido
     """
+    non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     user = get_object_or_404(User, username=username)
     try:
         perfil = Profile.objects.get(usuario=user)
@@ -224,6 +233,7 @@ def profile(request, username=None):
         'posts': posts,
         'imagenes': all_images,
         'relaciones': relaciones,
+        'non_read_notis':non_read_notis,
     })
 
 def test(request):
@@ -240,13 +250,15 @@ def profile_settings(request):
     Permite modificar opciones del perfil (profile) y acceso a 
     modificar cosas del usuario
     """
+    non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     if request.method == 'GET':
         try:
             perfil = Profile.objects.get(usuario=request.user)
         except Profile.DoesNotExist:
             perfil = Profile.objects.create(usuario=request.user)
         return render(request, 'profiles_settings.html', {
-            'perfil': perfil
+            'perfil': perfil,
+            'non_read_notis':non_read_notis,
         })
     else:
         #Codigo para guardar los datos del perfil
@@ -283,6 +295,7 @@ def user_settings(request):
     Configurar cosas del usuario haciendo uso 
     de metodos de django
     """
+    non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     if request.method == 'POST':
         user_form = UpdateUserForm(request.POST, instance=request.user)
 
@@ -292,13 +305,15 @@ def user_settings(request):
     else:
         user_form = UpdateUserForm(instance=request.user)
 
-    return render(request, 'user_settings.html', {'user_form': user_form})
+    return render(request, 'user_settings.html', {'user_form': user_form,
+                                                  'non_read_notis':non_read_notis,})
 
 @login_required
 def search(request, categoria='Off-topic'):
     """
     Buscar post en base a las categorias
     """
+    non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     posts = Post.objects.annotate(
     cantidad_likes=Count(Case(When(likes__valor=1, then=1), output_field=IntegerField())),
     cantidad_dislikes=Count(Case(When(likes__valor=2, then=1), output_field=IntegerField()))
@@ -313,6 +328,17 @@ def search(request, categoria='Off-topic'):
         'posts': posts,
         'imagenes': all_images,
         'relaciones': relaciones,
+        'non_read_notis':non_read_notis,
+    })
+
+@login_required
+def notificaciones(request):
+    non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
+    notis = Notificaciones.objects.filter(receptor=request.user).order_by('-creado_en')
+    notis.update(fue_leido=True)
+    return render(request, 'notificaciones.html',{
+        'notis':notis,
+        'non_read_notis':non_read_notis,
     })
 
 

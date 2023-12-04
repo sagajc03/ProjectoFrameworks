@@ -16,6 +16,7 @@ urlpatterns = [
     path('user_settings', views.user_settings, name='user_settings'),
     path('test/', views.test),
     path('search/<str:categoria>',views.search, name="search"),
+    path('notifications/', views.notificaciones, name='notifications'),
     path('incrementar_like/<int:post_id>/', views.incrementar_like, name='incrementar_like'),
     path('quitar_like/<int:post_id>/', views.quitar_like, name='quitar_like'),
     path('incrementar_dislike/<int:post_id>/', views.incrementar_dislike, name='incrementar_dislike'),
