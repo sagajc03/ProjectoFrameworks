@@ -1,6 +1,105 @@
 {%extends 'layouts/base.html'%}
 
 {%block content%}
-<h1>{{ title }}</h1>
-<p>TONTON QUIEN ME LEA, AWEBO ME LEISTE XDDDD</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma 4 Tacos de Asada</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2em 0;
+        }
+
+        section {
+            margin: 2em;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 2em;
+            border-radius: 8px;
+        }
+        h1 {
+            color: white;  
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        #team {
+            background-color: #f4f4f4;
+        }
+
+        #explore {
+            text-align: center;
+            margin-top: 2em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>¡Bienvenido a la Plataforma 4T!</h1>
+    </header>
+
+    <section id="about">
+        <h2>Acerca de nosotros</h2>
+        <p>Somos un equipo apasionado por el desarrollo de soluciones innovadoras, y nos complace presentarte nuestra última creación: una plataforma tipo red social exclusiva para estudiantes de la UAQ.</p>
+    </section>
+
+    <section id="overview">
+        <h2>Visión general del programa</h2>
+        <p><strong>Nombre del Proyecto:</strong> 4T</p>
+        <p><strong>Objetivo:</strong> Desarrollar una comunidad en línea donde los estudiantes puedan conectarse, ofrecer servicios y productos, promoviendo así la colaboración y la oferta dentro de la comunidad universitaria.</p>
+    </section>
+
+    <section id="team">
+        <h2>Equipo de Desarrollo</h2>
+        <ul>
+            <li>Juan Carlos Salas Gallegos (307015)</li>
+            <li>Javier Valencia Vázquez (277813)</li>
+            <li>Diego Emmanuel López Palacios (297208)</li>
+        </ul>
+    </section>
+
+    <section id="explore">
+        <p>¡Explora la plataforma y <a href="/login">únete a la comunidad de 4T</a>!</p>
+    </section>
+</body>
+</html>
+
 {%endblock%}

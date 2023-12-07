@@ -1,7 +1,92 @@
-body{
-    background-color: #202020;
-    color:azure;
+body {
+    background-color: #fff;
+    color: #333;
+    font-family: Arial, sans-serif;
+  }
+  
+  .timeline-container {
+    max-width: 800px;
+    margin: 20px auto;
+  }
+  
+  .post-card {
+    background-color: #f0efff;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .like-dislike-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .like-btn,
+.dislike-btn {
+    padding: 8px 12px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s;
 }
+
+.like-btn:hover,
+.dislike-btn:hover {
+    background-color: #e6f7e6;
+}
+
+.liked,
+.disliked {
+    background-color: #ff6666;
+    color: #fff;
+}
+.likes,
+.dislikes {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+  
+  .post-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .post-content h3,
+  .post-content h5 {
+    margin-bottom: 5px;
+  }
+  
+  .image-container {
+    margin-top: 10px;
+  }
+  
+  .image-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+  }
+  
+  .image-list li {
+    margin-right: 10px;
+  }
+  
+  .thumbnail {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+  }
+  
+  .metadata {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 12px;
+  }
+  
 
 .navbar ul li a {
     text-decoration: none;
@@ -76,4 +161,67 @@ body{
     max-height: 100px;
     border: 2px #F0EFFF;
     border-style: solid;
+}
+
+/* Aplicar un color de fondo específico a la barra de navegación */
+.navbar {
+    background-color: #F0EFFF !important;
+    color: black;
+}
+
+.navbar-brand {
+    padding: 5px; 
+}
+
+.navbar-nav .nav-link {
+    padding: 15px 10px; 
+}
+.navbar-nav .nav-link {
+    font-size: 20px; 
+}
+.navbar-nav {
+    text-align: center; 
+}
+.navbar-toggler-icon {
+    font-size: 0.8rem; /* Ajusta según tu preferencia */
+}
+
+
+.profile-container {
+    display: flex;
+    align-items: flex-start; /* Ajusta la alineación vertical */
+
+}
+
+.pfp {
+    width: 100%;
+    height: 100%;
+    border: 2px #F0EFFF;
+    border-style: solid;
+    border-radius: 50%; /* Hace que la imagen sea redonda */
+    overflow: hidden; /* Asegura que la imagen no se salga del área redonda */
+    border-color: blue;
+}
+
+
+
+
+.s {
+    font-size: 25px; /* O ajusta el tamaño de la fuente según tus necesidades */
+}
+
+.thumbnail {
+    width: 500px; /* Ajusta el tamaño según tus necesidades */
+    height: 300px;
+  }
+  
+  .truncate-text {
+    max-height: 3.6em; /* Ajusta según tus necesidades */
+    overflow: hidden;
+}
+
+.nav-logo {
+    width: 24px; /* Ajusta el tamaño según tus necesidades */
+    height: 24px; /* Ajusta el tamaño según tus necesidades */
+    margin-right: 5px; /* Ajusta el margen según tus necesidades */
 }

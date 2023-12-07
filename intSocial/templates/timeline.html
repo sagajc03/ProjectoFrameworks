@@ -2,106 +2,86 @@
 
 {% block title %} TimeLine {% endblock %}
 
-{% block content %}
-
-<h1>Timeline</h1>
-
 {% load custom_tags %}
 
+{% block content %}
 
-{% for post in posts %}
-<article class="card container">
-    <div class="row">
-        <div class="col-sm-2">
-            <div class="row">
-                
-                    
-                    {{ post.cantidad_likes }}
-                {% user_has_liked post.id '1' as has_liked %}
-                {% if has_liked %}
-                    <form method="post" action="{% url 'quitar_like' post.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Quitar Like">
-                    </form>
-                {% else %}
-                    <form method="post" action="{% url 'incrementar_like' post.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Dar Like">
-                    </form>
-                {% endif %}
-        
-                
-                
-            </div>
-            <br>
-            <div class="row">
-                {% user_has_liked post.id '2' as has_disliked %}
-                {% if has_disliked %}
-                    <form method="post" action="{% url 'quitar_dislike' post.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Quitar Dislike">
-                    </form>
-                {% else %}
-                    <form method="post" action="{% url 'incrementar_dislike' post.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Dar Dislike">
-                    </form>
-                {% endif %}
-                    
-                    {{ post.cantidad_dislikes }}
-                
-            </div>
+<div class="timeline-container">
+  <h1>Timeline</h1>
+
+  {% for post in posts %}
+    <article class="post-card">
+      <div class="like-dislike-section">
+        <div class="likes">
+          {{ post.cantidad_likes }}
+          {% user_has_liked post.id '1' as has_liked %}
+          {% if has_liked %}
+            <form method="post" action="{% url 'quitar_like' post.id %}">
+              {% csrf_token %}
+              <input type="submit" class="like-btn liked" value="👍 Quitar Like">
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'incrementar_like' post.id %}">
+              {% csrf_token %}
+              <input type="submit" class="like-btn" value="👍 Dar Like">
+            </form>
+          {% endif %}
         </div>
-        <div class="col-sm-10">    
-            <div class="d-flex justify-content-start">
-                <a href="{% url 'profile' post.autor.username %}" >
-                    <h6 class="px-4">{{post.autor.username}}</h6>
-                </a>
-                <a href="{% url 'post_details' post.id %}" >
-                    <h2 class="px-1">{{post.titulo}}</h2>
-                </a>
-            </div>
-            <a href="{% url 'post_details' post.id %}" >
-                <p>{{post.contenido}}</p>
-            
-                <ul>
-                    {% for relacion in relaciones %}
-                        {% if relacion.post == post %}
-                            {% for imagen in imagenes %}
-                                {% if relacion.imagen == imagen %}
-                                    <li>
-                                        <a src="{{ imagen.src }}"><img src="{{  imagen.src }}" alt="{{ imagen.titulo }}"></a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                <div class="row">
-                    <h6 class="col-sm-2">{{post.creado_en}}</h6>
-                    <h5 class="col-sm-8">{{post.categoria}}</h5>
-                </div>
-            </a>
+        <div class="dislikes">
+          {% user_has_liked post.id '2' as has_disliked %}
+          {% if has_disliked %}
+            <form method="post" action="{% url 'quitar_dislike' post.id %}">
+              {% csrf_token %}
+              <input type="submit" class="dislike-btn disliked" value="👎 Quitar Dislike">
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'incrementar_dislike' post.id %}">
+              {% csrf_token %}
+              <input type="submit" class="dislike-btn" value="👎 Dar Dislike">
+            </form>
+          {% endif %}
+          {{ post.cantidad_dislikes }}
         </div>
-    </div>
-</article>
+      </div>
+      <div class="post-content">
+        <h3 style="color: #333;">{{ post.autor.username }}</h3>
+        <h5 style="color: #555; cursor: default;">{{ post.titulo }}</h5>
+        <p>{{ post.contenido }}</p>
+        <ul class="image-list">
+          {% for relacion in relaciones %}
+            {% if relacion.post == post %}
+              {% for imagen in imagenes %}
+                {% if relacion.imagen == imagen %}
+                  <li>
+                    <a href="{{ imagen.src }}"><img src="{{ imagen.src }}" alt="{{ imagen.titulo }}" class="thumbnail"></a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </ul>
+        <div class="metadata">
+          <div class="created-at">{{ post.creado_en }}</div>
+          <div class="category">{{ post.categoria }}</div>
+        </div>
+      </div>
+    </article>
+  {% endfor %}
 
-{% endfor %}
-
-<div class="pagination">
+  <div class="pagination">
     <span class="step-links">
-        {% if posts.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ posts.previous_page_number }}">previous</a>
-        {% endif %}
-        
-        <span class="current-page">Página {{ posts.number }} de {{ posts.paginator.num_pages }}.</span>
-        
-        {% if posts.has_next %}
-            <a href="?page={{ posts.next_page_number }}">next</a>
-            <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
+      {% if posts.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ posts.previous_page_number }}">previous</a>
+      {% endif %}
+      <span class="current-page">Página {{ posts.number }} de {{ posts.paginator.num_pages }}.</span>
+      {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}">next</a>
+        <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+      {% endif %}
     </span>
+  </div>
+
 </div>
 
 {% endblock %}

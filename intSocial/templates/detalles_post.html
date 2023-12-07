@@ -1,109 +1,99 @@
-{% extends 'layouts/base.html'  %}
+{% extends 'layouts/base.html' %}
 
-
-{% block title %} {{post.titulo}} {% endblock %}
+{% block title %} {{ post.titulo }} {% endblock %}
 
 {% block content %}
+  <h1>{{ post.titulo }}</h1>
 
-{% load custom_tags %}
-
-
-<h1> {{post.titulo}} </h1>
-<article class="card container">
+  <article class="card container">
     <div class="row">
-        <div class="col-sm-2">
-            <div class="row">
-                
-                    
-                    {{ cantidad_likes }}
-                {% user_has_liked post.id '1' as has_liked %}
-                {% if has_liked %}
-                    <form method="post" action="{% url 'quitar_like' post.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Quitar Like">
-                    </form>
-                {% else %}
-                    <form method="post" action="{% url 'incrementar_like' post.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Dar Like">
-                    </form>
-                {% endif %}
-        
-                
-                
-            </div>
-            <br>
-            <div class="row">
-                {% user_has_liked post.id '2' as has_disliked %}
-                {% if has_disliked %}
-                    <form method="post" action="{% url 'quitar_dislike' post.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Quitar Dislike">
-                    </form>
-                {% else %}
-                    <form method="post" action="{% url 'incrementar_dislike' post.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Dar Dislike">
-                    </form>
-                {% endif %}
-                    
-                    {{ cantidad_dislikes }}
-                
-            </div>
+      <div class="col-sm-2">
+        <div class="row">
+          <div class="col">
+            {{ cantidad_likes }}
+            {% user_has_liked post.id '1' as has_liked %}
+            {% if has_liked %}
+              <form method="post" action="{% url 'quitar_like' post.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Quitar Like">
+              </form>
+            {% else %}
+              <form method="post" action="{% url 'incrementar_like' post.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Dar Like">
+              </form>
+            {% endif %}
+          </div>
         </div>
-        <div class="col-sm-10">    
-            <div class="d-flex justify-content-start">
-                <a href="{% url 'profile' post.autor.username %}" >
-                    <h6 class="px-4">{{post.autor.username}}</h6>
-                </a>
-                <a href="{% url 'post_details' post.id %}" >
-                    <h2 class="px-1">{{post.titulo}}</h2>
-                </a>
-            </div>
-            <a href="{% url 'post_details' post.id %}" >
-                <p>{{post.contenido}}</p>
-            
-                <ul>
-                    {% for relacion in relaciones %}
-                        {% if relacion.post == post %}
-                            {% for imagen in imagenes %}
-                                {% if relacion.imagen == imagen %}
-                                    <li>
-                                        <a src="{{ imagen.src }}"><img src="{{  imagen.src }}" alt="{{ imagen.titulo }}"></a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                <div class="row">
-                    <h6 class="col-sm-2">{{post.creado_en}}</h6>
-                    <h5 class="col-sm-8">{{post.categoria}}</h5>
-                </div>
-            </a>
+        <div class="row">
+          <div class="col">
+            {% user_has_liked post.id '2' as has_disliked %}
+            {% if has_disliked %}
+              <form method="post" action="{% url 'quitar_dislike' post.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Quitar Dislike">
+              </form>
+            {% else %}
+              <form method="post" action="{% url 'incrementar_dislike' post.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Dar Dislike">
+              </form>
+            {% endif %}
+            {{ cantidad_dislikes }}
+          </div>
         </div>
+      </div>
+
+      <div class="col-sm-10">
+        <div class="d-flex justify-content-start">
+          <a href="{% url 'profile' post.autor.username %}">
+            <h6 class="px-4">{{ post.autor.username }}</h6>
+          </a>
+          <a href="{% url 'post_details' post.id %}">
+            <h2 class="px-1">{{ post.titulo }}</h2>
+          </a>
+        </div>
+        <a href="{% url 'post_details' post.id %}">
+          <p>{{ post.contenido }}</p>
+
+          <ul>
+            {% for relacion in relaciones %}
+              {% if relacion.post == post %}
+                {% for imagen in imagenes %}
+                  {% if relacion.imagen == imagen %}
+                    <li>
+                      <a src="{{ imagen.src }}"><img src="{{ imagen.src }}" alt="{{ imagen.titulo }}"></a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </ul>
+
+          <div class="row">
+            <h6 class="col-sm-2">{{ post.creado_en }}</h6>
+            <h5 class="col-sm-8">{{ post.categoria }}</h5>
+          </div>
+        </a>
+      </div>
     </div>
-</article>
+  </article>
 
-
-
-    {% for comentario in comentarios %}
+  {% for comentario in comentarios %}
     <article class="comentario">
-            <h2>{{comentario.titulo}}</h2>
-            <h4>respuesta a {{comentario.ref.autor}}</h4>
-            <h3>{{comentario.user.username}}</h3>
-            <p>{{comentario.contenido}}</p>
-            <h6>{{comentario.creado_en}}</h6>
+      <h2>{{ comentario.titulo }}</h2>
+      <h4>respuesta a {{ comentario.ref.autor }}</h4>
+      <h3>{{ comentario.user.username }}</h3>
+      <p>{{ comentario.contenido }}</p>
+      <h6>{{ comentario.creado_en }}</h6>
     </article>
+  {% endfor %}
 
-    {% endfor %}
-</article>
-<form method="post">
+  <form method="post">
     {% csrf_token %}
-    {{form.as_p}}
+    {{ form.as_p }}
     <button class="btn btn-primary mb-3">
-        Publicar
+      Publicar
     </button>
-</form>
-
+  </form>
 {% endblock %}

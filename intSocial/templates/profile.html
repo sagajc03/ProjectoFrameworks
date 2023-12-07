@@ -1,5 +1,5 @@
-{%extends 'layouts/base.html'%} 
-{%block content%}
+{% extends 'layouts/base.html'%} 
+{% block content %}
 
 {% load custom_tags %}
 <div class="banner">
@@ -12,19 +12,18 @@
 {% endfor %}
 <div class="container">
     <div class="row">
-        <div class="col-sm-2">
+        <div class="col-sm-2 profile-container">
             <img src="{% if profile.imagen %} {{profile.imagen.url}} {% endif %}"  alt="profile-picture" class="pfp">
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-6">
             <div class="row">
-                <h3>{{ user.username }}</h3>
-            </div>
-            <div class="row">
-                <h4>{{ user.first_name }} {{user.last_name}}</h4>
+                <h1>{{ user.username }} <span class="s">( {{ profile.titulo }})</h1>
+                <p>{{profile.fecha_nacimiento}}</p> 
             </div>
         </div>
-        <div class="col-sm-4">
-            <p>{{ profile.info_contacto }}</p>
+        <div class="col-sm-2">
+            <h6>{{ profile.info_contacto }}</h6>
+            <h6>{{ profile.email_publico }} </h6> 
         </div>
         <a href="{% url 'profile_settings' %}" class="col-sm-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
@@ -32,87 +31,71 @@
                 <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
             </svg>
         </a>
+        <div class="col-sm-5 offset-sm-2 bio">
+            <p>{{ profile.bio }} </p> 
+        </div>
     </div>
 </div>
+<hr>
 <div class="container">
-{% for post in posts %}
-    <article class="card container">
-        <div class="row">
-            <div class="col-sm-2">
-                <div class="row">
-                    
-                        
-                        {{ post.cantidad_likes }}
-                    {% user_has_liked post.id '1' as has_liked %}
-                    {% if has_liked %}
-                        <form method="post" action="{% url 'quitar_like' post.id %}">
-                            {% csrf_token %}
-                            <input type="submit" value="Quitar Like">
-                        </form>
-                    {% else %}
-                        <form method="post" action="{% url 'incrementar_like' post.id %}">
-                            {% csrf_token %}
-                            <input type="submit" value="Dar Like">
-                        </form>
-                    {% endif %}
-            
-                    
-                    
-                </div>
-                <br>
-                <div class="row">
-                    {% user_has_liked post.id '2' as has_disliked %}
-                    {% if has_disliked %}
-                        <form method="post" action="{% url 'quitar_dislike' post.id %}">
-                            {% csrf_token %}
-                            <input type="submit" value="Quitar Dislike">
-                        </form>
-                    {% else %}
-                        <form method="post" action="{% url 'incrementar_dislike' post.id %}">
-                            {% csrf_token %}
-                            <input type="submit" value="Dar Dislike">
-                        </form>
-                    {% endif %}
-                        
-                        {{ post.cantidad_dislikes }}
-                    
-                </div>
-            </div>
-            <div class="col-sm-10">    
-                <div class="d-flex justify-content-start">
-                    <a href="{% url 'profile' post.autor.username %}" >
-                        <h6 class="px-4">{{post.autor.username}}</h6>
-                    </a>
-                    <a href="{% url 'post_details' post.id %}" >
-                        <h2 class="px-1">{{post.titulo}}</h2>
-                    </a>
-                </div>
-                <a href="{% url 'post_details' post.id %}" >
-                    <p>{{post.contenido}}</p>
-                
-                    <ul>
-                        {% for relacion in relaciones %}
-                            {% if relacion.post == post %}
-                                {% for imagen in imagenes %}
-                                    {% if relacion.imagen == imagen %}
-                                        <li>
-                                            <a src="{{ imagen.src }}"><img src="{{  imagen.src }}" alt="{{ imagen.titulo }}"></a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                    <div class="row">
-                        <h6 class="col-sm-2">{{post.creado_en}}</h6>
-                        <h5 class="col-sm-8">{{post.categoria}}</h5>
-                    </div>
-                </a>
-            </div>
+    {% for post in posts %}
+    <article class="post-card">
+      <div class="like-dislike-section">
+        <div class="likes">
+          {{ post.cantidad_likes }}
+          {% user_has_liked post.id '1' as has_liked %}
+          {% if has_liked %}
+            <form method="post" action="{% url 'quitar_like' post.id %}">
+              {% csrf_token %}
+              <input type="submit" class="like-btn liked" value="👍 Quitar Like">
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'incrementar_like' post.id %}">
+              {% csrf_token %}
+              <input type="submit" class="like-btn" value="👍 Dar Like">
+            </form>
+          {% endif %}
         </div>
+        <div class="dislikes">
+          {% user_has_liked post.id '2' as has_disliked %}
+          {% if has_disliked %}
+            <form method="post" action="{% url 'quitar_dislike' post.id %}">
+              {% csrf_token %}
+              <input type="submit" class="dislike-btn disliked" value="👎 Quitar Dislike">
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'incrementar_dislike' post.id %}">
+              {% csrf_token %}
+              <input type="submit" class="dislike-btn" value="👎 Dar Dislike">
+            </form>
+          {% endif %}
+          {{ post.cantidad_dislikes }}
+        </div>
+      </div>
+      <div class="post-content">
+        <h3 style="color: #333;">{{ post.autor.username }}</h3>
+        <h5 style="color: #555; cursor: default;">{{ post.titulo }}</h5>
+        <p>{{ post.contenido }}</p>
+        <ul class="image-list">
+          {% for relacion in relaciones %}
+            {% if relacion.post == post %}
+              {% for imagen in imagenes %}
+                {% if relacion.imagen == imagen %}
+                  <li>
+                    <a href="{{ imagen.src }}"><img src="{{ imagen.src }}" alt="{{ imagen.titulo }}" class="thumbnail"></a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </ul>
+        <div class="metadata">
+          <div class="created-at">{{ post.creado_en }}</div>
+          <div class="category">{{ post.categoria }}</div>
+        </div>
+      </div>
     </article>
-
-{% endfor %}
+  {% endfor %}
 </div>
 
-{%endblock%}
+{% endblock %}
