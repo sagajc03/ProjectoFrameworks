@@ -44,9 +44,19 @@
         </div>
       </div>
       <div class="post-content">
-        <h3 style="color: #333;">{{ post.autor.username }}</h3>
+        
+        <h3 style="color: #333;">
+          <a href="{% url 'profile' post.autor.username %}">
+            {{ post.autor.username }}
+          </a>
+        </h3>
+        
         <h5 style="color: #555; cursor: default;">{{ post.titulo }}</h5>
-        <p>{{ post.contenido }}</p>
+        <p>
+          <a href="{% url 'post_details' id_post=post.id %}">
+              {{ post.contenido }}
+          </a>
+      </p>
         <ul class="image-list">
           {% for relacion in relaciones %}
             {% if relacion.post == post %}

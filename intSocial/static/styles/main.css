@@ -64,21 +64,6 @@ body {
     margin-top: 10px;
   }
   
-  .image-list {
-    list-style: none;
-    padding: 0;
-    display: flex;
-  }
-  
-  .image-list li {
-    margin-right: 10px;
-  }
-  
-  .thumbnail {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-  }
   
   .metadata {
     display: flex;
@@ -210,10 +195,6 @@ body {
     font-size: 25px; /* O ajusta el tamaño de la fuente según tus necesidades */
 }
 
-.thumbnail {
-    width: 500px; /* Ajusta el tamaño según tus necesidades */
-    height: 300px;
-  }
   
   .truncate-text {
     max-height: 3.6em; /* Ajusta según tus necesidades */
@@ -225,3 +206,36 @@ body {
     height: 24px; /* Ajusta el tamaño según tus necesidades */
     margin-right: 5px; /* Ajusta el margen según tus necesidades */
 }
+
+
+.post-content {
+    /* ... Tus estilos existentes ... */
+    word-wrap: break-word; /* Rompe las palabras largas para que se adapten al contenedor */
+  }
+  
+  .image-list {
+    /* ... Tus estilos existentes ... */
+    display: flex;
+    flex-wrap: wrap; /* Permite que las imágenes se envuelvan a la siguiente línea */
+    justify-content: flex-start; /* Alinea las imágenes al inicio del contenedor */
+    align-items: center; /* Alinea las imágenes verticalmente al centro del contenedor */
+  }
+  
+  .image-list li {
+    /* ... Tus estilos existentes ... */
+    margin-right: 10px; /* Añade un margen derecho entre las imágenes */
+    margin-bottom: 10px; /* Añade un margen inferior entre las imágenes */
+  }
+  
+  .thumbnail {
+    /* ... Tus estilos existentes ... */
+    max-width: 100%; /* Ajusta el tamaño máximo de la imagen al contenedor */
+    height: auto; /* Permite que la altura se ajuste automáticamente al ancho */
+  }
+  
+  .metadata {
+    /* ... Tus estilos existentes ... */
+  }
+  
+  /* ... Tu CSS existente ... */
+  
