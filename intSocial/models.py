@@ -6,7 +6,8 @@ from django.contrib.auth.models import User
 class Usuario(models.Model):
     """
     Datos necesarios de un usuario, NO USADO,
-    CAMBIADO POR EL DE DEFECTO DE DJANGO
+    CAMBIADO POR EL DE DEFECTO DE DJANGO, SIN EMBARGO, 
+    USAN CASI LOS MISMOS DATOS, TOAR EN CUENTA PARA EL MODELO
     """
     nombre = models.CharField(max_length=50)
     apellidos = models.CharField(max_length=50)
@@ -24,14 +25,15 @@ class Usuario(models.Model):
 
 class Level(models.Model):
     """
-    Nivel de privaciodad
+    Nivel de privaciodad, TECNICAMENTE SE USA, 
+    PERO A LA VEZ NO (DENTRO DE LA LOGICA (SOLO EXISTE PUBLICO))
     """
     name = models.CharField(max_length=50)  # 1 publico, 2 privado, 3 grupo
 
 
 class Profile(models.Model):
     """
-    Datos extras que tiene un usuario
+    Datos extras que tiene un usuario y que puede personalizar con libertad
     """
     fecha_nacimiento = models.DateField(null=True)
     genero = models.CharField(max_length=10, null=True)
@@ -50,7 +52,7 @@ class Profile(models.Model):
 
 class Portafolio(models.Model):
     """
-    También se les podrian considerar albums
+    También se les podrian considerar albums, NO SE USA
     """
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField()
@@ -129,6 +131,9 @@ class Comentario(models.Model):
 
 
 class Notificaciones(models.Model):
+    """
+    Permite guardar las notificaciones recibidas
+    """
     not_type = models.IntegerField()  # 1 likes, 2 comentarios
     ref = models.ForeignKey(Post, on_delete=models.CASCADE)
     receptor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificaciones_recibe')
@@ -139,7 +144,7 @@ class Notificaciones(models.Model):
 
 class Grupos(models.Model):
     """
-    Considerando no usarlo
+    NO SE USA
     """
     imagen = models.CharField(max_length=255)
     titulo = models.CharField(max_length=100)

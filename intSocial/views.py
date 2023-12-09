@@ -19,7 +19,7 @@ from django.views.decorators.http import require_POST
 
 def index(request):
     """
-    Inicio que no tiene nada
+    Inicio que tiene un poco de informacion
     """
     title = 'Soy el inicio awebito'
     return render(request, "index.html", {
@@ -188,6 +188,7 @@ def new_post(request):
     non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     if request.method == 'GET':
         return render(request, 'new_post.html', {
+            'non_read_notis':non_read_notis,
             'form': CreateNewPost()
         })
     else:
@@ -248,7 +249,7 @@ def test(request):
 def profile_settings(request):
     """
     Permite modificar opciones del perfil (profile) y acceso a 
-    modificar cosas del usuario
+    modificar cosas del usuario (django User)
     """
     non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     if request.method == 'GET':
@@ -311,7 +312,7 @@ def user_settings(request):
 @login_required
 def search(request, categoria='Off-topic'):
     """
-    Buscar post en base a las categorias
+    Buscar post en base a las categorias preestablecidas
     """
     non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     posts = Post.objects.annotate(
@@ -333,6 +334,10 @@ def search(request, categoria='Off-topic'):
 
 @login_required
 def notificaciones(request):
+    """
+    Permite leer las notificaciones recibidas (por como estan configuradas,
+    solo son los comentarios que reciben tus post)
+    """
     non_read_notis= Notificaciones.objects.filter(receptor=request.user, fue_leido=False).count()
     notis = Notificaciones.objects.filter(receptor=request.user).order_by('-creado_en')
     notis.update(fue_leido=True)
@@ -344,6 +349,9 @@ def notificaciones(request):
 
 @require_POST
 def incrementar_like(request, post_id):
+    """
+    Paso intermedio, crea un like sobre una publicacion, quita el dislike en caso de haberlo
+    """
     publicacion = get_object_or_404(Post, pk=post_id)
     if Likes.objects.filter(usuario=request.user, ref=publicacion, valor=2).exists():
         quitar_like_dislike(request, post_id, 2)
@@ -352,6 +360,9 @@ def incrementar_like(request, post_id):
 
 @require_POST
 def incrementar_dislike(request, post_id):
+    """
+    Paso intermedio, crea un dislike sobre una publicacion, quita el like en caso de haberlo
+    """
     publicacion = get_object_or_404(Post, pk=post_id)
     if Likes.objects.filter(usuario=request.user, ref=publicacion, valor=1).exists():
         quitar_like_dislike(request, post_id, 1)
@@ -360,14 +371,23 @@ def incrementar_dislike(request, post_id):
 
 @require_POST
 def quitar_like(request, post_id):
+    """
+    quita un like
+    """
     quitar_like_dislike(request, post_id, 1)
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @require_POST
 def quitar_dislike(request, post_id):
+    """
+    quita un dislike
+    """
     quitar_like_dislike(request, post_id, 2)
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 def quitar_like_dislike(request, post_id, tipo):
+    """
+    borra sobre la base de datos el like o dislike
+    """
     publicacion = get_object_or_404(Post, pk=post_id)
     Likes.objects.filter(usuario=request.user, ref=publicacion, valor=tipo).delete()
