@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ts3&f9&^dkf)v)$3%$i9ilu&r!wt3&lw3qun9d!gpv-8d96u!d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = []
@@ -79,10 +79,10 @@ WSGI_APPLICATION = 'proyectoFramework.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sample',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',  # or the hostname where your MySQL server is running
+        'NAME': 'databaseprueba',
+        'USER': 'admin',
+        'PASSWORD': 'senko123',
+        'HOST': 'databaseprueba.c5hqyq9wc0lz.us-east-1.rds.amazonaws.com',  # or the hostname where your MySQL server is running
         'PORT': '3306',      # or the port on which your MySQL server is listening
     }
 }
